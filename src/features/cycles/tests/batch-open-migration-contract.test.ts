@@ -6,7 +6,7 @@ function compactSql(): string {
   const dir = path.join(process.cwd(), "supabase", "migrations");
   return fs
     .readdirSync(dir)
-    .filter((name) => /^\d{4}_.+\.sql$/.test(name))
+    .filter((name) => /^\d{14}_.+\.sql$/.test(name))
     .sort()
     .map((name) => fs.readFileSync(path.join(dir, name), "utf8"))
     .join("\n")

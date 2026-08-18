@@ -38,8 +38,10 @@ async function remoteQuery(sql) {
 }
 
 const PREAMBLE = `
-create extension if not exists pgcrypto;
-create extension if not exists pg_trgm;
+create schema if not exists extensions;
+grant usage on schema extensions to public;
+create extension if not exists pgcrypto with schema extensions;
+set search_path to public, extensions;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname='service_role') then
     create role service_role nologin;
@@ -173,6 +175,8 @@ const expectedMigrations = [
   "20260812000900_comments.sql",
   "20260812001000_contract_checks.sql",
   "20260812001100_action_plan_deadline_change_requests.sql",
+  "20260813000100_fami_preliminary_open_period_and_close.sql",
+  "20260814000100_action_plan_monitoring_export_fields.sql",
 ];
 if (JSON.stringify(files) !== JSON.stringify(expectedMigrations)) {
   throw new Error(`Baseline oficial divergente: ${files.join(", ")}`);

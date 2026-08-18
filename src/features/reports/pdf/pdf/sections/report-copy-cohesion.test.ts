@@ -91,12 +91,11 @@ describe("coesão textual do relatório oficial", () => {
     const zeroPoints = FAMI_SCORING_GROUPS.find((group) => group.id === "zero");
 
     expect(basicPoints?.items).toEqual([
-      "Sim em critério que não exige evidência",
+      "Resposta Sim em critério que não exige evidência.",
     ]);
     expect(zeroPoints?.items).toEqual([
-      "Não",
-      "Sim que exige evidência sem comprovação aprovada (pendente, ausente ou insuficiente)",
-      "Sim validado sem comprovação",
+      "Resposta Não.",
+      "Resposta Sim em critério que exige evidência, mas sem comprovação aprovada.",
     ]);
   });
 });

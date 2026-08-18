@@ -9,6 +9,7 @@ import {
   type NavItem,
 } from "@/shared/ui/navigation";
 import { layout, sidebar } from "@/shared/layout/design-system";
+import { InstitutionalFooter } from "@/shared/ui/components/institutional-footer";
 import { SidebarNavLink } from "./sidebar-nav";
 import { AppShellPageHeader } from "./app-shell-page-header";
 import { LogoutButton } from "./logout-button";
@@ -113,6 +114,7 @@ export async function AppShell({
       <main className={layout.appMain}>
         <PageShell>{children}</PageShell>
       </main>
+      <InstitutionalFooter />
     </SidebarShell>
   );
 }

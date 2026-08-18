@@ -18,10 +18,12 @@ const officialThresholds = [
 describe("contrato canônico FAMI na baseline timestampada", () => {
   it("preserva políticas históricas e usa v7/2 pontos como padrão vigente", () => {
     const sql = compact(`${schema}\n${functions}`);
-    expect(sql).toContain("famipolicyversiontextnotnulldefault'v7'");
-    expect(sql).toContain("yeswithapprovedevidencenumeric(6,3)notnulldefault2");
-    expect(sql).toContain("yeswithapprovedevidenceweightin(1.5,2)");
-    expect(sql).toContain("famipolicyversionin('v3','v4','v5','v6','v7')");
+    expect(sql).toContain("fami_policy_versiontextnotnulldefault'v7'");
+    expect(sql).toContain(
+      "yes_with_approved_evidence_weightnumeric(6,3)notnulldefault2",
+    );
+    expect(sql).toContain("yes_with_approved_evidence_weightin(1.5,2)");
+    expect(sql).toContain("fami_policy_versionin('v3','v4','v5','v6','v7')");
   });
 
   it("materializa a política v7 sem ponto provisório em critério com evidência", () => {
@@ -30,7 +32,7 @@ describe("contrato canônico FAMI na baseline timestampada", () => {
     expect(sql).toContain("functionpublic.finalize_validation_cycle");
     expect(sql).toContain("whenhas_approved_evidencethen2::numeric");
     expect(sql).toContain("else0::numeric");
-    expect(sql).toContain("famipolicyversion='v7'");
+    expect(sql).toContain("fami_policy_version='v7'");
   });
 
   it("mantém os cinco níveis oficiais de maturidade", () => {

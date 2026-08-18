@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("./answers-queries", () => ({
+vi.mock("../answers-queries", () => ({
   loadFormBasic: vi.fn().mockResolvedValue({
     id: "11111111-1111-4111-8111-111111111111",
     name: "Diagnóstico",

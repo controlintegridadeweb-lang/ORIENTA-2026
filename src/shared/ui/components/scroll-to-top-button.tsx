@@ -43,7 +43,7 @@ export function ScrollToTopButton() {
         "backdrop-blur-sm transition-all duration-300 ease-out",
         "hover:border-slate-300 hover:bg-white hover:text-brand-700 hover:shadow-card-hover",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
-        formFill ? "bottom-24 right-4 sm:bottom-28 sm:right-6" : "bottom-5 right-4 sm:bottom-6 sm:right-6",
+        formFill ? "bottom-32 right-4 sm:bottom-36 sm:right-6" : "bottom-16 right-4 sm:bottom-20 sm:right-6",
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0",

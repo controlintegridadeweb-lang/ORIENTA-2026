@@ -18,8 +18,10 @@ const migDir = path.join(root, "supabase/migrations");
 const reportPath = path.join(root, "var/form-management-rpc-pglite-report.json");
 
 const PREAMBLE = `
-create extension if not exists pgcrypto;
-create extension if not exists pg_trgm;
+create schema if not exists extensions;
+grant usage on schema extensions to public;
+create extension if not exists pgcrypto with schema extensions;
+set search_path to public, extensions;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname='service_role') then
     create role service_role nologin;
@@ -83,6 +85,8 @@ const expectedMigrations = [
   "20260812000900_comments.sql",
   "20260812001000_contract_checks.sql",
   "20260812001100_action_plan_deadline_change_requests.sql",
+  "20260813000100_fami_preliminary_open_period_and_close.sql",
+  "20260814000100_action_plan_monitoring_export_fields.sql",
 ];
 if (JSON.stringify(files) !== JSON.stringify(expectedMigrations)) {
   throw new Error(`Baseline oficial divergente: ${files.join(", ")}`);
@@ -140,6 +144,9 @@ async function seedGraph(db) {
     cycleValidated: "55555555-5555-5555-5555-555555555555",
     cycleCompleted: "66666666-6666-6666-6666-666666666666",
     cycleOpen: "77777777-7777-7777-7777-777777777777",
+    period2026: "b1b1b1b1-b1b1-41b1-81b1-b1b1b1b1b1b1",
+    period2025: "c2c2c2c2-c2c2-42c2-82c2-c2c2c2c2c2c2",
+    period2024: "d3d3d3d3-d3d3-43d3-83d3-d3d3d3d3d3d3",
     processingValidated: "88888888-8888-8888-8888-888888888888",
     processingCompleted: "99999999-9999-9999-9999-999999999999",
     famiValidated: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
@@ -216,15 +223,22 @@ async function seedGraph(db) {
     values
       ('${ids.formVersion}', '${ids.qvA}', 0),
       ('${ids.formVersion}', '${ids.qvB}', 1);
+
+    insert into public.form_periods (
+      id, form_version_id, period_code, label, status
+    ) values
+      ('${ids.period2026}', '${ids.formVersion}', '2026', '2026', 'open'),
+      ('${ids.period2025}', '${ids.formVersion}', '2025', '2025', 'open'),
+      ('${ids.period2024}', '${ids.formVersion}', '2024', '2024', 'open');
   `);
 
   // Ciclo em coleta (prazo / pausa)
   await db.exec(`
     insert into public.cycles (
-      id, form_version_id, organization_id, period_label, state,
+      id, form_version_id, organization_id, period_id, period_label, state,
       starts_at, response_deadline_at, original_response_deadline_at
     ) values (
-      '${ids.cycleOpen}', '${ids.formVersion}', '${ids.org}', '2026',
+      '${ids.cycleOpen}', '${ids.formVersion}', '${ids.org}', '${ids.period2026}', '2026',
       'in_response',
       now() - interval '10 days',
       now() + interval '20 days',
@@ -238,11 +252,11 @@ async function seedGraph(db) {
   // Ciclo validated com FAMI
   await db.exec(`
     insert into public.cycles (
-      id, form_version_id, organization_id, period_label, state,
+      id, form_version_id, organization_id, period_id, period_label, state,
       starts_at, response_deadline_at, original_response_deadline_at,
       submitted_at, validated_at
     ) values (
-      '${ids.cycleValidated}', '${ids.formVersion}', '${ids.org}', '2025',
+      '${ids.cycleValidated}', '${ids.formVersion}', '${ids.org}', '${ids.period2025}', '2025',
       'validated',
       now() - interval '60 days',
       now() - interval '30 days',
@@ -270,11 +284,11 @@ async function seedGraph(db) {
   // Ciclo completed (reabertura parcial)
   await db.exec(`
     insert into public.cycles (
-      id, form_version_id, organization_id, period_label, state,
+      id, form_version_id, organization_id, period_id, period_label, state,
       starts_at, response_deadline_at, original_response_deadline_at,
       submitted_at, validated_at, closed_at
     ) values (
-      '${ids.cycleCompleted}', '${ids.formVersion}', '${ids.org}', '2024',
+      '${ids.cycleCompleted}', '${ids.formVersion}', '${ids.org}', '${ids.period2024}', '2024',
       'completed',
       now() - interval '120 days',
       now() - interval '90 days',
@@ -451,20 +465,6 @@ async function runAssertions(db, ids) {
 }
 
 async function main() {
-  if (files.length < 30) {
-    throw new Error(
-      `Baseline oficial incompleta: esperadas ao menos 30 migrations, encontradas ${files.length}.`,
-    );
-  }
-  for (let i = 0; i < files.length; i++) {
-    const expected = String(i + 1).padStart(4, "0");
-    if (!files[i].startsWith(`${expected}_`)) {
-      throw new Error(
-        `Sequência de migrations com lacuna: esperado ${expected}_*, encontrado ${files[i]}.`,
-      );
-    }
-  }
-
   console.log(`PGlite form-management RPC: ${files.length} migrations…`);
   const db = new PGlite({ extensions: { pgcrypto, pg_trgm } });
 

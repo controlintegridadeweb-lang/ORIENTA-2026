@@ -10,7 +10,7 @@ const runLive =
 
 describe("baseline greenfield em PGlite", () => {
   it.skipIf(!runLive)(
-    "aplica 0001–0030 em Postgres descartável sem erros",
+    "aplica a baseline timestampada em Postgres descartável sem erros",
     () => {
       execFileSync(process.execPath, ["scripts/database/greenfield-pglite.mjs"], {
         cwd: process.cwd(),
@@ -20,7 +20,7 @@ describe("baseline greenfield em PGlite", () => {
       });
       expect(existsSync(reportPath)).toBe(true);
       const report = JSON.parse(readFileSync(reportPath, "utf8"));
-      expect(report.appliedCount).toBe(30);
+      expect(report.appliedCount).toBe(13);
       expect(report.failures).toEqual([]);
       expect([
         "PASS_BASELINE_APPLIED",

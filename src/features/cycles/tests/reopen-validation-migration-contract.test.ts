@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const baseline = readdirSync(resolve(process.cwd(), "supabase", "migrations"))
-  .filter((name) => /^\d{4}_.+\.sql$/.test(name))
+  .filter((name) => /^\d{14}_.+\.sql$/.test(name))
   .sort()
   .map((name) =>
     readFileSync(join(process.cwd(), "supabase", "migrations", name), "utf8"),

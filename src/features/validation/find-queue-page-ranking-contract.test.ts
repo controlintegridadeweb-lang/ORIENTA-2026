@@ -9,7 +9,7 @@ function compactSql(value: string): string {
 function baselineSql(): string {
   const dir = join(process.cwd(), "supabase", "migrations");
   return readdirSync(dir)
-    .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+    .filter((f) => /^\d{14}_.+\.sql$/.test(f))
     .sort()
     .map((f) => readFileSync(join(dir, f), "utf8"))
     .join("\n");

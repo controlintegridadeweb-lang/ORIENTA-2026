@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 function compactSql(): string {
   const dir = join(process.cwd(), "supabase", "migrations");
   return readdirSync(dir)
-    .filter((name) => /^\d{4}_.+\.sql$/.test(name))
+    .filter((name) => /^\d{14}_.+\.sql$/.test(name))
     .sort()
     .map((name) => readFileSync(join(dir, name), "utf8"))
     .join("\n");

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const root = process.cwd();
 
-const routeImplementations: Record<string, string> = {
+const routeImplementations: Record<string, string | string[]> = {
   "src/app/api/admin/cycles/batch/route.ts":
     "src/features/cycles/http/create-cycles-batch-route.ts",
   "src/app/api/respondent/cycles/[cycleId]/submit/route.ts":
@@ -29,6 +29,11 @@ const routeImplementations: Record<string, string> = {
     "src/features/reports/http/official-route.ts",
   "src/app/api/reports/[reportId]/download/route.ts":
     "src/features/reports/http/download-route.ts",
+  "src/app/api/workbench/evidence/upload/route.ts": [
+    "src/app/api/workbench/evidence/upload/route.ts",
+    "src/application/workbench-evidence-upload/initialize-evidence-upload.ts",
+    "src/application/workbench-evidence-upload/verify-evidence-upload.ts",
+  ],
 };
 
 const criticalRoutes = [
@@ -58,7 +63,9 @@ function source(path: string): string {
 }
 
 function implementationSource(path: string): string {
-  return source(routeImplementations[path] ?? path);
+  const mapped = routeImplementations[path] ?? path;
+  const files = Array.isArray(mapped) ? mapped : [mapped];
+  return files.map(source).join("\n");
 }
 
 describe("contrato das rotas críticas", () => {

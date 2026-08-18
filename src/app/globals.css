@@ -34,6 +34,7 @@
   --color-brand-soft: var(--color-brand-50);
   --color-brand-deep: var(--color-brand-700);
   --color-brand-deepest: var(--color-brand-800);
+  --color-footer: #095b54;
 
   /* Superfícies e textos neutros (override do default Tailwind via @theme). */
   --color-surface: #ffffff;
@@ -87,6 +88,7 @@
   --color-brand-800: var(--color-brand-800);
   --color-brand-900: var(--color-brand-900);
   --color-brand-950: var(--color-brand-950);
+  --color-footer: var(--color-footer);
 
   --shadow-card: var(--ds-shadow-card);
   --shadow-card-hover: var(--ds-shadow-card-hover);

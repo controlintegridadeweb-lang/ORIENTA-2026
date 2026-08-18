@@ -21,20 +21,10 @@ function compactSql(value: string): string {
   return value.replace(/\s+/g, "").toLowerCase();
 }
 
-function latestMigrationMatching(prefix: string): string {
-  const dir = join(process.cwd(), "supabase", "migrations");
-  const file = readdirSync(dir)
-    .filter((f) => /^\d{4}_.+\.sql$/.test(f) && f.includes(prefix))
-    .sort()
-    .at(-1);
-  if (!file) throw new Error(`migration not found for prefix ${prefix}`);
-  return readFileSync(join(dir, file), "utf8");
-}
-
 function allMigrationsSql(): string {
   const dir = join(process.cwd(), "supabase", "migrations");
   return readdirSync(dir)
-    .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+    .filter((f) => /^\d{14}_.+\.sql$/.test(f))
     .sort()
     .map((f) => readFileSync(join(dir, f), "utf8"))
     .join("\n");
@@ -176,7 +166,7 @@ describe("contrato FAMI SQL ↔ TypeScript", () => {
   });
 
   it("SQL vigente contém a árvore oficial de pontuação Sim (v7)", () => {
-    const sql = compactSql(latestMigrationMatching("fami_policy_v7"));
+    const sql = compactSql(allMigrationsSql());
     expect(sql).toContain(
       "whennotrequires_evidencethen1::numericwhenhas_approved_evidencethen2::numericelse0::numeric",
     );
@@ -331,7 +321,7 @@ describe("contrato recomendações SQL ↔ TypeScript", () => {
 
 describe("fonte oficial documentada", () => {
   it("SQL é a fonte de consolidação; TS é espelho unitário", () => {
-    const sql = latestMigrationMatching("fami_policy_v7");
+    const sql = allMigrationsSql();
     expect(sql).toContain("create or replace function public.calculate_live_fami_rows");
     expect(sql).toContain("set fami_policy_version = 'v7'");
     expect(typeof scoreFamiCriterion).toBe("function");

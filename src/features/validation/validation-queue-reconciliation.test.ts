@@ -99,7 +99,7 @@ describe("reconciliação da fila de validação", () => {
   it("preserva a regra SQL da fila (LEFT JOIN + exige evidência)", () => {
     const dir = path.join(process.cwd(), "supabase", "migrations");
     const sql = readdirSync(dir)
-      .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+      .filter((f) => /^\d{14}_.+\.sql$/.test(f))
       .sort()
       .map((f) => readFileSync(path.join(dir, f), "utf8"))
       .join("\n");

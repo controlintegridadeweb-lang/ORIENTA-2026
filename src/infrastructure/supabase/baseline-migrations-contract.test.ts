@@ -41,14 +41,21 @@ describe("migrations ORIENTA", () => {
   });
 
   it("mantém a DAG estrutural consolidada da baseline", () => {
-    expect(source("20260812000100_extensions_types.sql")).toContain("create extension if not exists pgcrypto");
+    expect(source("20260812000100_extensions_types.sql")).toContain(
+      "create schema if not exists extensions",
+    );
+    expect(source("20260812000100_extensions_types.sql")).toContain(
+      "create extension if not exists pgcrypto with schema extensions",
+    );
     expect(source("20260812000200_schema.sql")).toContain("create table public.validation_analysis_drafts");
     expect(source("20260812000400_read_models.sql")).toContain("evidence_operational_view");
     expect(source("20260812000500_functions.sql")).toContain("calculate_live_fami_rows");
     expect(source("20260812000600_triggers.sql")).toContain("create trigger");
     expect(source("20260812000700_storage.sql")).toMatch(/storage/i);
     expect(source("20260812000800_security_rls.sql")).toContain("enable row level security");
-    expect(source("20260812001000_contract_checks.sql")).not.toContain("bootstrap_diagnostico_integridade_2026");
+    expect(source("20260812001000_contract_checks.sql")).toContain(
+      "to_regprocedure('public.bootstrap_diagnostico_integridade_2026(uuid)') is not null",
+    );
   });
 
   it("mantém FAMI v7, fila alinhada e rascunhos de análise", () => {

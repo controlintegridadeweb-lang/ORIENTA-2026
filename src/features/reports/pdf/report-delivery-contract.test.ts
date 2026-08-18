@@ -6,7 +6,7 @@ function baselineSql(): string {
   const dir = path.join(process.cwd(), "supabase", "migrations");
   return fs
     .readdirSync(dir)
-    .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+    .filter((f) => /^\d{14}_.+\.sql$/.test(f))
     .sort()
     .map((f) => fs.readFileSync(path.join(dir, f), "utf8"))
     .join("\n")

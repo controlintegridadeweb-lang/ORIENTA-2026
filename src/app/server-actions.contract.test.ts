@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 const root = process.cwd();
 
 const actionFiles = [
-  "src/app/auth/actions.ts",
+    "src/features/auth/server-actions.ts",
   "src/app/admin/organizacoes/actions.ts",
   "src/app/admin/usuarios/actions.ts",
 ] as const;

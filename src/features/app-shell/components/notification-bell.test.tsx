@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { NotificationBell } from "./notification-bell";
 
 const notification = {
-  id: "notification-1",
+  id: "11111111-1111-4111-8111-111111111111",
   title: "Evidência revisada",
   message: "A evidência recebeu uma decisão.",
   action_path: null,
@@ -16,6 +16,7 @@ const notification = {
 function jsonResponse(body: unknown, ok = true) {
   return Promise.resolve({
     ok,
+    text: vi.fn().mockResolvedValue(JSON.stringify(body)),
     json: vi.fn().mockResolvedValue(body),
   } as unknown as Response);
 }

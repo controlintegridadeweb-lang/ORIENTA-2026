@@ -6,7 +6,7 @@ const migrationsDir = resolve(process.cwd(), "supabase/migrations");
 
 function migrationFiles(): string[] {
   return readdirSync(migrationsDir)
-    .filter((name) => /^\d{4}_.+\.sql$/.test(name))
+    .filter((name) => /^\d{14}_.+\.sql$/.test(name))
     .sort();
 }
 

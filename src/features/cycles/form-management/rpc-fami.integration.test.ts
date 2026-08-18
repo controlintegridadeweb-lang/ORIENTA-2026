@@ -14,7 +14,7 @@ const scriptPath = join(
 
 /**
  * Integração real em Postgres descartável (PGlite):
- * migrations 0001–0030, incluindo prazo, pausa e reaberturas total e parcial
+ * baseline timestampada vigente, incluindo prazo, pausa e reaberturas total e parcial
  * e impacto em FAMI.
  *
  * Roda por padrão em `npm test`. Desligue com SKIP_FORM_MGMT_RPC=1 se precisar
@@ -45,7 +45,7 @@ describe("gestão de formulário — RPC + FAMI (PGlite)", () => {
 
       expect(existsSync(reportPath)).toBe(true);
       const report = JSON.parse(readFileSync(reportPath, "utf8"));
-      expect(report.appliedCount).toBe(30);
+      expect(report.appliedCount).toBe(13);
       expect(report.failures).toEqual([]);
       expect(report.verdict).toBe("PASS_FORM_MANAGEMENT_RPC");
 

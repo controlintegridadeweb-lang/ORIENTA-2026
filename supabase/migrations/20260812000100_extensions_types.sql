@@ -1,6 +1,11 @@
 -- ORIENTA greenfield baseline — Extensões, enums e tipos finais
 -- Gerada a partir do estado final pré-cutover; não contém dados históricos reais.
 
+-- Schema alvo das extensões. No Postgres gerenciado do Supabase ele já existe;
+-- em Postgres vazio (PGlite/greenfield) precisa existir antes do CREATE EXTENSION.
+create schema if not exists extensions;
+grant usage on schema extensions to public;
+
 create extension if not exists pgcrypto with schema extensions;
 
 create extension if not exists pg_trgm with schema extensions;

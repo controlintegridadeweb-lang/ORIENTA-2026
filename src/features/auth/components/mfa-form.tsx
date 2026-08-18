@@ -205,8 +205,8 @@ export function MfaForm({ redirectTo }: { redirectTo: string }) {
               </p>
               <p className="text-sm text-slate-600">
                 Por segurança, o segundo fator não pode ser removido pela própria
-                sessão protegida apenas por senha. Solicite ao responsável técnico
-                autorizado a recuperação do MFA pelo procedimento operacional
+                sessão protegida apenas por senha. Solicite ao responsável técnico autorizado
+                a recuperação do MFA pelo procedimento operacional
                 documentado, com simulação prévia, registro append-only e
                 confirmação de identidade por canal independente.
               </p>

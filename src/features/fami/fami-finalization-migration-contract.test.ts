@@ -7,7 +7,7 @@ const migrationsDir = path.join(process.cwd(), "supabase", "migrations");
 function allSql(): string {
   return fs
     .readdirSync(migrationsDir)
-    .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+    .filter((f) => /^\d{14}_.+\.sql$/.test(f))
     .sort()
     .map((f) => fs.readFileSync(path.join(migrationsDir, f), "utf8"))
     .join("\n")

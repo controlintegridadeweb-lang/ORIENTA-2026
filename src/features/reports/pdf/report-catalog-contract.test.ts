@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const migration = fs
   .readdirSync(path.join(process.cwd(), "supabase", "migrations"))
-  .filter((name) => /^\d{4}_.+\.sql$/.test(name))
+  .filter((name) => /^\d{14}_.+\.sql$/.test(name))
   .sort()
   .map((name) =>
     fs.readFileSync(path.join(process.cwd(), "supabase", "migrations", name), "utf8"),
