@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": [
+    "src/infrastructure/supabase/database.types.ts"
+  ],
+  "ignoreBinaries": [
+    "psql"
+  ],
+  "ignoreDependencies": [
+    "supabase"
+  ]
+}

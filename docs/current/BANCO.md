@@ -1,0 +1,50 @@
+# Banco de dados — baseline greenfield
+
+## Fonte oficial
+
+A única fonte executável do schema é `supabase/migrations/`, com **13 migrations timestampadas**: 10 migrations imutáveis da baseline greenfield (`20260812000100` a `20260812001000`) e evoluções pós-baseline (`20260812001100` a `20260814000100`). O intervalo completo é `20260812000100` a `20260814000100`.
+
+A sequência evolutiva antiga `0001`–`0054` não participa mais da instalação. Ela foi consolidada antes da primeira implantação para evitar que um banco novo reproduza patches, backfills e correções intermediárias.
+
+## Contratos estruturais
+
+- 57 tabelas públicas no estado final esperado;
+- 188 funções de aplicação finais: 180 em `public` + 8 helpers de autorização em `app_private`;
+- 6 views/read models públicos;
+- 91 triggers finais;
+- FAMI oficial `v7`; a carga inicial de 2026 não transporta séries técnicas de políticas anteriores;
+- FAMI preliminar quadrimestral em estruturas separadas do oficial;
+- RLS habilitado conforme modelo de autorização;
+- buckets privados para evidências, planos de ação e relatórios;
+- evidências/arquivos somente disponibilizados após validação estrutural;
+- auditoria append-only;
+- concorrência otimista por `revision` nos fluxos críticos.
+
+## Instalação limpa
+
+1. Aplicar as 13 migrations em banco vazio.
+2. Regenerar `database.types.ts` a partir desse banco.
+3. Executar verificadores SQL, RLS, Storage e advisors.
+4. Não executar seeds de desenvolvimento na implantação real.
+5. Executar `npm run bootstrap:2026` para Auth e dados atuais de 2026.
+6. Executar verificações de integridade e E2E antes do go-live.
+
+```bash
+npm run db:audit:migrations
+supabase db reset --local
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npm run gen:types
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npm run check:generated-types
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npm run db:verify
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+## Alteração formal de prazo
+
+`action_plans.due_date` não pode ser modificado diretamente após a criação da ação. O respondente registra uma solicitação em `action_plan_deadline_change_requests`, com novo prazo e justificativa; somente a aprovação administrativa pela RPC `decide_action_plan_deadline_change` altera o prazo vigente. Rejeições e aprovações permanecem auditáveis.
+
+## Limite de alteração
+
+Após a primeira aplicação compartilhada, migrations já aplicadas não podem ser reescritas, renumeradas ou removidas. Qualquer evolução futura deve criar uma nova migration timestampada.
