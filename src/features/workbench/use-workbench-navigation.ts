@@ -90,58 +90,49 @@ export function useWorkbenchNavigation({
   const [appliedNavigationQuestionId, setAppliedNavigationQuestionId] = useState<
     string | null
   >(() => (navigationSectionIndex >= 0 ? navigationQuestionId ?? null : null));
-  const scrolledQuestionRef = useRef<string | null>(null);
-  const appliedScopeKeyRef = useRef(scopeKey);
+  const scrolledQuestionRef = useRef<{
+    scopeKey?: string;
+    questionId: string;
+  } | null>(null);
+  const [appliedScopeKey, setAppliedScopeKey] = useState(scopeKey);
 
-  /* eslint-disable react-hooks/set-state-in-effect -- muda o escopo completo da navegação. */
-  useEffect(() => {
-    if (appliedScopeKeyRef.current === scopeKey) return;
-    appliedScopeKeyRef.current = scopeKey;
+  if (appliedScopeKey !== scopeKey) {
+    setAppliedScopeKey(scopeKey);
     setCurrentSectionIndex(navigationSectionIndex >= 0 ? navigationSectionIndex : 0);
     setStepDirection("forward");
     setAppliedNavigationQuestionId(
       navigationSectionIndex >= 0 ? navigationQuestionId ?? null : null,
     );
-    scrolledQuestionRef.current = null;
-  }, [navigationQuestionId, navigationSectionIndex, scopeKey]);
-  /* eslint-enable react-hooks/set-state-in-effect */
-
-  /* eslint-disable react-hooks/set-state-in-effect -- Sincroniza a navegação local após a mudança da correção preferencial, sem atualizar estado durante a renderização. */
-  useEffect(() => {
-    if (
-      !navigationQuestionId ||
-      navigationSectionIndex < 0 ||
-      appliedNavigationQuestionId === navigationQuestionId
-    ) {
-      return;
-    }
-
+  } else if (
+    navigationQuestionId &&
+    navigationSectionIndex >= 0 &&
+    appliedNavigationQuestionId !== navigationQuestionId
+  ) {
     setAppliedNavigationQuestionId(navigationQuestionId);
     setStepDirection(
       navigationSectionIndex < currentSectionIndex ? "back" : "forward",
     );
     setCurrentSectionIndex(navigationSectionIndex);
-  }, [
-    appliedNavigationQuestionId,
-    currentSectionIndex,
-    navigationQuestionId,
-    navigationSectionIndex,
-  ]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+  }
 
   useEffect(() => {
     if (!navigationQuestionId || navigationSectionIndex < 0) return;
-    if (scrolledQuestionRef.current === navigationQuestionId) return;
+    if (
+      scrolledQuestionRef.current?.questionId === navigationQuestionId &&
+      scrolledQuestionRef.current.scopeKey === scopeKey
+    ) {
+      return;
+    }
 
     const frame = window.requestAnimationFrame(() => {
       const target = document.getElementById(`pergunta-${navigationQuestionId}`);
       if (!target) return;
-      scrolledQuestionRef.current = navigationQuestionId;
+      scrolledQuestionRef.current = { scopeKey, questionId: navigationQuestionId };
       target.scrollIntoView({ behavior: "smooth", block: "center" });
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [currentSectionIndex, navigationQuestionId, navigationSectionIndex]);
+  }, [currentSectionIndex, navigationQuestionId, navigationSectionIndex, scopeKey]);
 
   const resetNavigation = useCallback(() => {
     setCurrentSectionIndex(0);

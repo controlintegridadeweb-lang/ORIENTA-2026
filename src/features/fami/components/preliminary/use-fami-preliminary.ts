@@ -92,10 +92,39 @@ export function useFamiPreliminary(
   referenceYear: number,
 ) {
   const [payload, setPayload] = useState<PreliminaryPayload>(emptyPayload);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() => Boolean(cycleId));
   const [submitting, setSubmitting] = useState<Quadrimester | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const scopeKey = `${cycleId ?? ""}:${referenceYear}`;
+  const [observedScope, setObservedScope] = useState(scopeKey);
+
+  if (observedScope !== scopeKey) {
+    setObservedScope(scopeKey);
+    setPayload(emptyPayload);
+    setLoading(Boolean(cycleId));
+    setError(null);
+    setMessage(null);
+  }
+
+  const readPreliminary = useCallback(async (): Promise<PreliminaryPayload> => {
+    if (!cycleId) return emptyPayload;
+    const params = new URLSearchParams({ cycleId, year: String(referenceYear) });
+    const response = await fetch(`/api/fami/preliminary?${params.toString()}`, {
+      cache: "no-store",
+    });
+    const raw: unknown = await response.json();
+    if (!response.ok) {
+      throw new Error(readPreliminaryApiError(raw, famiPreliminaryLabels.loadError));
+    }
+    const parsed = apiPayloadSchema.safeParse(raw);
+    if (!parsed.success) throw new Error(famiPreliminaryLabels.invalidResponse);
+    return {
+      history: parsed.data.history,
+      latestByPeriod: parsed.data.latestByPeriod,
+      tracking: parsed.data.tracking,
+    };
+  }, [cycleId, referenceYear]);
 
   const reload = useCallback(async () => {
     if (!cycleId) {
@@ -107,31 +136,35 @@ export function useFamiPreliminary(
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams({ cycleId, year: String(referenceYear) });
-      const response = await fetch(`/api/fami/preliminary?${params.toString()}`, {
-        cache: "no-store",
-      });
-      const raw: unknown = await response.json();
-      if (!response.ok) {
-        throw new Error(readPreliminaryApiError(raw, famiPreliminaryLabels.loadError));
-      }
-      const parsed = apiPayloadSchema.safeParse(raw);
-      if (!parsed.success) throw new Error(famiPreliminaryLabels.invalidResponse);
-      setPayload({
-        history: parsed.data.history,
-        latestByPeriod: parsed.data.latestByPeriod,
-        tracking: parsed.data.tracking,
-      });
+      setPayload(await readPreliminary());
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : famiPreliminaryLabels.loadError);
     } finally {
       setLoading(false);
     }
-  }, [cycleId, referenceYear]);
+  }, [cycleId, readPreliminary]);
 
   useEffect(() => {
-    void reload();
-  }, [reload]);
+    if (!cycleId) return;
+    let cancelled = false;
+    void readPreliminary()
+      .then((next) => {
+        if (!cancelled) setPayload(next);
+      })
+      .catch((caught: unknown) => {
+        if (!cancelled) {
+          setError(
+            caught instanceof Error ? caught.message : famiPreliminaryLabels.loadError,
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cycleId, readPreliminary]);
 
   const calculate = useCallback(
     async (quadrimester: Quadrimester) => {

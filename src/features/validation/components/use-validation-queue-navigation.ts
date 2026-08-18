@@ -62,6 +62,11 @@ export function useValidationQueueNavigation({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchDraft, setSearchDraft] = useState(pagination.search);
+  const [seenSearch, setSeenSearch] = useState(pagination.search);
+  if (seenSearch !== pagination.search) {
+    setSeenSearch(pagination.search);
+    setSearchDraft(pagination.search);
+  }
   const hasTargetEvidence = Boolean(targetEvidenceId);
   const queueSituation = pagination.queueSituation;
   const page = hasTargetEvidence
@@ -130,7 +135,7 @@ export function useValidationQueueNavigation({
         queueSituationFilterToParam(next.queueSituation ?? queueSituation),
       );
 
-      let axisValue =
+      const axisValue =
         next.axisId === undefined
           ? selectedAxisId === ALL_AXES_PARAM
             ? null
@@ -198,10 +203,6 @@ export function useValidationQueueNavigation({
       selectedSectionId,
     ],
   );
-
-  useEffect(() => {
-    setSearchDraft(pagination.search);
-  }, [pagination.search]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {

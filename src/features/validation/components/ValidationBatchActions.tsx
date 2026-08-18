@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   ValidationBatchAction,
   ValidationBatchOption,
@@ -30,12 +30,10 @@ export function ValidationBatchActions({
     [action, options],
   );
 
-  useEffect(() => {
-    if (action && !options.some((option) => option.action === action)) {
-      setAction(null);
-      setJustification("");
-    }
-  }, [action, options]);
+  if (action && !options.some((option) => option.action === action)) {
+    setAction(null);
+    setJustification("");
+  }
 
   if (selectedCount === 0) return null;
 

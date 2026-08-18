@@ -10,11 +10,9 @@ export function useValidationCriteriaState(
 ) {
   const router = useRouter();
   const focusAfterRefresh = useRef(false);
-  const [criteria, setCriteria] = useState(initialCriteria);
   const [itemPending, setItemPending] = useState(false);
 
   useEffect(() => {
-    setCriteria(initialCriteria);
     if (!focusAfterRefresh.current) return;
     focusAfterRefresh.current = false;
     window.requestAnimationFrame(() => {
@@ -42,7 +40,7 @@ export function useValidationCriteriaState(
   }
 
   return {
-    criteria,
+    criteria: initialCriteria,
     itemPending,
     refreshAndFocus,
     withItemPending,

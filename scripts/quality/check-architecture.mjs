@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, extname, join, normalize, relative, resolve } from "node:path";
+import { dirname, extname, join, relative, resolve } from "node:path";
 
 const ROOT = process.cwd();
 const errors = [];

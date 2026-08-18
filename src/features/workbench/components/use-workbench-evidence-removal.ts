@@ -63,6 +63,36 @@ export function useWorkbenchEvidenceRemoval({
     [drafts, ids, reportFailure],
   );
 
+  const removePendingUpload = useCallback(
+    async (row: Row, pendingUploadId: string) => {
+      setSavingQuestionId(row.questionId);
+      setFeedback(null);
+      try {
+        const response = await removeEvidenceAttachment(ids, {
+          questionId: row.questionId,
+          pendingUploadId,
+        });
+        if (!response.ok) {
+          reportFailure(
+            await readResponseError(
+              response,
+              "Falha ao descartar arquivo temporário.",
+            ),
+            "Falha ao descartar arquivo temporário.",
+          );
+          return;
+        }
+        drafts.clearIfPendingUpload(row.questionId, pendingUploadId);
+        notify.success("Arquivo temporário removido.");
+      } catch (caught: unknown) {
+        reportFailure(caught, "Falha ao remover o arquivo temporário.");
+      } finally {
+        setSavingQuestionId(null);
+      }
+    },
+    [drafts, ids, reportFailure, setFeedback, setSavingQuestionId],
+  );
+
   const handleRemoveEvidence = useCallback(
     async (
       row: Row,
@@ -141,38 +171,12 @@ export function useWorkbenchEvidenceRemoval({
       drafts,
       ids,
       loadWorkbench,
+      removePendingUpload,
       reportFailure,
       setFeedback,
       setSavingQuestionId,
     ],
   );
-
-  async function removePendingUpload(row: Row, pendingUploadId: string) {
-    setSavingQuestionId(row.questionId);
-    setFeedback(null);
-    try {
-      const response = await removeEvidenceAttachment(ids, {
-        questionId: row.questionId,
-        pendingUploadId,
-      });
-      if (!response.ok) {
-        reportFailure(
-          await readResponseError(
-            response,
-            "Falha ao descartar arquivo temporário.",
-          ),
-          "Falha ao descartar arquivo temporário.",
-        );
-        return;
-      }
-      drafts.clearIfPendingUpload(row.questionId, pendingUploadId);
-      notify.success("Arquivo temporário removido.");
-    } catch (caught: unknown) {
-      reportFailure(caught, "Falha ao remover o arquivo temporário.");
-    } finally {
-      setSavingQuestionId(null);
-    }
-  }
 
   return { discardPendingUpload, handleRemoveEvidence };
 }

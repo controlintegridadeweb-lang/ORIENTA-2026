@@ -46,14 +46,7 @@ export function MfaForm({ redirectTo }: { redirectTo: string }) {
     return clientRef.current;
   }
 
-  const prepare = useCallback(async () => {
-    const generation = generationRef.current + 1;
-    generationRef.current = generation;
-    setLoading(true);
-    setError(null);
-    setSetup(null);
-    setCode("");
-
+  const executePrepare = useCallback(async (generation: number) => {
     try {
       const nextSetup = await prepareAdminMfaSetup(client());
       if (generationRef.current !== generation) return;
@@ -79,12 +72,24 @@ export function MfaForm({ redirectTo }: { redirectTo: string }) {
     }
   }, [redirectTo, router]);
 
+  const prepare = useCallback(() => {
+    const generation = generationRef.current + 1;
+    generationRef.current = generation;
+    setLoading(true);
+    setError(null);
+    setSetup(null);
+    setCode("");
+    void executePrepare(generation);
+  }, [executePrepare]);
+
   useEffect(() => {
-    void prepare();
+    const generation = generationRef.current + 1;
+    generationRef.current = generation;
+    void executePrepare(generation);
     return () => {
       generationRef.current += 1;
     };
-  }, [prepare]);
+  }, [executePrepare]);
 
   async function verify(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

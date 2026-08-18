@@ -11,7 +11,7 @@ import {
   questionsResponseSchema,
 } from "./client-contracts";
 import type { FormSummary, QuestionRow } from "./admin-service";
-import { FormPublishPendingError, type FormPublishPending } from "./publish-contract";
+import { FormPublishPendingError } from "./publish-contract";
 
 export { FormPublishPendingError };
 

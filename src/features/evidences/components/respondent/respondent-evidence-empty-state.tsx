@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowUp, BadgeCheck, CheckCircle2, FileSearch, Inbox, X } from "lucide-react";
-import { evidenceLabels } from "@/shared/labels/official-labels";
 import { formSurface } from "@/shared/layout/form-surface";
 
 type Variant =

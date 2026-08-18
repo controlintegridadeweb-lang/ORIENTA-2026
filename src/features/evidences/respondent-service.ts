@@ -20,7 +20,6 @@ import {
 export type { RespondentStatsResult } from "./respondent-stats-types";
 
 import {
-  respondentEvidenceListQuerySchema,
   type RespondentEvidenceItem,
   type RespondentEvidenceListQuery,
 } from "./respondent-contracts";

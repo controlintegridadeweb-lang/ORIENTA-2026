@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formSurface } from "@/shared/layout/form-surface";
 import { notify } from "@/infrastructure/notifications/notify";
 import { updateAdminCycleReferencePeriod } from "@/features/cycles";
@@ -22,11 +22,6 @@ export function ReportReferencePeriodEditor({
   const [startYear, setStartYear] = useState(cycle.referenceStartYear?.toString() ?? "");
   const [endYear, setEndYear] = useState(cycle.referenceEndYear?.toString() ?? "");
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    setStartYear(cycle.referenceStartYear?.toString() ?? "");
-    setEndYear(cycle.referenceEndYear?.toString() ?? "");
-  }, [cycle.cycleId, cycle.referenceEndYear, cycle.referenceStartYear]);
 
   if (cycle.referenceStartYear != null && cycle.referenceEndYear != null) {
     return (

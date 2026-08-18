@@ -98,6 +98,20 @@ export function RespondentEvidencesShell({
     return "ajustes";
   });
   const [drawerItem, setDrawerItem] = useState<RespondentEvidenceItem | null>(null);
+  const urlFilter = filterFromSearchParams(searchParams);
+  const rawOffset = Number(searchParams.get("offset"));
+  const urlOffset = Number.isInteger(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
+  const urlSnapshot = `${searchParams.toString()}::${urlOffset}`;
+  const [appliedUrlSnapshot, setAppliedUrlSnapshot] = useState(urlSnapshot);
+
+  if (appliedUrlSnapshot !== urlSnapshot) {
+    setAppliedUrlSnapshot(urlSnapshot);
+    setFilter((current) =>
+      JSON.stringify(current) === JSON.stringify(urlFilter) ? current : urlFilter,
+    );
+    setOffset((current) => (current === urlOffset ? current : urlOffset));
+  }
+
   const debouncedSearch = useDebounce(filter.search, 250);
 
   const fetchFilters = useMemo(() => ({
@@ -148,20 +162,14 @@ export function RespondentEvidencesShell({
   useEffect(() => {
     const rawCycleId = searchParams.get("cycleId");
     const rawFormId = searchParams.get("formId");
+    if (!isInvalidUuidParam(rawCycleId) && !isInvalidUuidParam(rawFormId)) return;
+
     const nextFilter = filterFromSearchParams(searchParams);
-    const rawOffset = Number(searchParams.get("offset"));
-    const nextOffset = Number.isInteger(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
-
-    if (isInvalidUuidParam(rawCycleId) || isInvalidUuidParam(rawFormId)) {
-      router.replace(respondentEvidenceListPath({ ...nextFilter, offset: nextOffset }), {
-        scroll: false,
-      });
-    }
-
-    setFilter((current) => JSON.stringify(current) === JSON.stringify(nextFilter)
-      ? current
-      : nextFilter);
-    setOffset((current) => current === nextOffset ? current : nextOffset);
+    const nextOffsetRaw = Number(searchParams.get("offset"));
+    const nextOffset = Number.isInteger(nextOffsetRaw) && nextOffsetRaw >= 0 ? nextOffsetRaw : 0;
+    router.replace(respondentEvidenceListPath({ ...nextFilter, offset: nextOffset }), {
+      scroll: false,
+    });
   }, [router, searchParams]);
 
   const handleRefresh = useCallback(async () => {

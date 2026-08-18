@@ -133,11 +133,17 @@ function ActionPlanProgressUpdatesSection({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const requestKey = `${planId}:${role}:${retry}`;
+  const [seenRequestKey, setSeenRequestKey] = useState(requestKey);
+
+  if (seenRequestKey !== requestKey) {
+    setSeenRequestKey(requestKey);
+    setLoading(true);
+    setError(null);
+  }
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
     const load =
       role === "admin"
         ? listActionPlanProgressUpdates

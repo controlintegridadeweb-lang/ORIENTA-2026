@@ -10,7 +10,6 @@ import {
 import {
   buildCurrentHistory,
   mapAuditHistory,
-  mapEmbeddedValidationToUi,
   mapEvidencePageRpcRow,
   mapEvidenceRow,
 } from "./read-model/mappers";

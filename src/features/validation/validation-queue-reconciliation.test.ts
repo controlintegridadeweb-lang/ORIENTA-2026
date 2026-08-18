@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import {
-  createAbsentEvidenceShell,
   deriveResponseEvidenceStatus,
   type QueueEvidence,
 } from "./queue-model";

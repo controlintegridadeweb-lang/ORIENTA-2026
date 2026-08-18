@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { UnifiedFormCriterion } from "../contracts";
 import {
   buildValidationBatchCommand,
@@ -16,6 +16,18 @@ import {
 } from "../queue-state-storage";
 import { useConfirm } from "@/shared/ui/components/confirm-dialog";
 import { describeError, notify } from "@/infrastructure/notifications/notify";
+
+function subscribeNever() {
+  return () => {};
+}
+
+function clientSnapshot() {
+  return true;
+}
+
+function serverSnapshot() {
+  return false;
+}
 
 export function useValidationBatchController({
   cycleId,
@@ -42,32 +54,56 @@ export function useValidationBatchController({
   );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isClient = useSyncExternalStore(
+    subscribeNever,
+    clientSnapshot,
+    serverSnapshot,
+  );
+  const visibleIds = useMemo(
+    () => new Set(criteria.map((criterion) => criterion.responseId)),
+    [criteria],
+  );
+  const visibleKey = [...visibleIds].join("|");
+  const [appliedSource, setAppliedSource] = useState({
+    cycleId,
+    visibleKey,
+    client: false,
+  });
 
-  useEffect(() => {
+  if (isClient && (appliedSource.cycleId !== cycleId || !appliedSource.client)) {
     const stored = loadQueueBatchSelection(cycleId);
-    if (!stored) return;
-    setBatchMode(stored.batchMode);
-    setSelectedEvidenceIds(new Set(stored.evidenceIds));
-    setSelectedNaIds(new Set(stored.naIds));
-  }, [cycleId]);
+    setAppliedSource({ cycleId, visibleKey, client: true });
+    setBatchMode(stored?.batchMode ?? false);
+    setSelectedEvidenceIds(
+      new Set((stored?.evidenceIds ?? []).filter((id) => visibleIds.has(id))),
+    );
+    setSelectedNaIds(
+      new Set((stored?.naIds ?? []).filter((id) => visibleIds.has(id))),
+    );
+  } else if (appliedSource.visibleKey !== visibleKey) {
+    setAppliedSource({ ...appliedSource, visibleKey });
+    setSelectedEvidenceIds(
+      (current) => new Set([...current].filter((id) => visibleIds.has(id))),
+    );
+    setSelectedNaIds(
+      (current) => new Set([...current].filter((id) => visibleIds.has(id))),
+    );
+  }
 
   useEffect(() => {
-    const visibleIds = new Set(criteria.map((criterion) => criterion.responseId));
-    setSelectedEvidenceIds((current) =>
-      new Set([...current].filter((id) => visibleIds.has(id))),
-    );
-    setSelectedNaIds((current) =>
-      new Set([...current].filter((id) => visibleIds.has(id))),
-    );
-  }, [criteria]);
-
-  useEffect(() => {
+    if (!appliedSource.client) return;
     saveQueueBatchSelection(cycleId, {
       batchMode,
       evidenceIds: [...selectedEvidenceIds],
       naIds: [...selectedNaIds],
     });
-  }, [batchMode, cycleId, selectedEvidenceIds, selectedNaIds]);
+  }, [
+    appliedSource.client,
+    batchMode,
+    cycleId,
+    selectedEvidenceIds,
+    selectedNaIds,
+  ]);
 
   const selectedResponseIds = useMemo(
     () => new Set([...selectedEvidenceIds, ...selectedNaIds]),

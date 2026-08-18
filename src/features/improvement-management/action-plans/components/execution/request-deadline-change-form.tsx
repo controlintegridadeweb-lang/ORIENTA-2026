@@ -54,6 +54,14 @@ export function RequestDeadlineChangeForm({
   const [error, setError] = useState<string | null>(null);
   const [requestedDueDate, setRequestedDueDate] = useState("");
   const [reason, setReason] = useState("");
+  const [loadedPlanId, setLoadedPlanId] = useState(plan.id);
+
+  if (loadedPlanId !== plan.id) {
+    setLoadedPlanId(plan.id);
+    setRequests([]);
+    setLoading(true);
+    setError(null);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -73,8 +81,27 @@ export function RequestDeadlineChangeForm({
   }, [plan.id]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    void listRespondentDeadlineChangeRequests({
+      planId: plan.id,
+      limit: 5,
+      offset: 0,
+    })
+      .then((page) => {
+        if (!cancelled) setRequests(page.items);
+      })
+      .catch((caught: unknown) => {
+        if (!cancelled) {
+          setError(describeError(caught, "Falha ao carregar as solicitações de final."));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [plan.id]);
 
   const pendingRequest = useMemo(
     () => requests.find((request) => request.status === "pending") ?? null,

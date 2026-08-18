@@ -116,17 +116,13 @@ export function ValidationFullFormView({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [criteria, setCriteria] =
-    useState<UnifiedFormCriterion[]>(initialCriteria);
   const [searchDraft, setSearchDraft] = useState(pagination.search);
+  const [seenSearch, setSeenSearch] = useState(pagination.search);
 
-  useEffect(() => {
-    setCriteria(initialCriteria);
-  }, [initialCriteria]);
-
-  useEffect(() => {
+  if (seenSearch !== pagination.search) {
+    setSeenSearch(pagination.search);
     setSearchDraft(pagination.search);
-  }, [pagination.search]);
+  }
 
   const page = parseValidationPage(
     searchParams.get("pagina") ?? String(pagination.page),
@@ -195,7 +191,7 @@ export function ValidationFullFormView({
   }) {
     const params = new URLSearchParams(searchParams.toString());
 
-    let axisValue =
+    const axisValue =
       next.axisId === undefined
         ? selectedAxisId === ALL_AXES_PARAM
           ? null
@@ -364,13 +360,13 @@ export function ValidationFullFormView({
           </p>
         </div>
 
-        {criteria.length === 0 ? (
+        {initialCriteria.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-200 px-6 py-12 text-center text-sm text-slate-500">
             Nenhum critério corresponde aos filtros selecionados.
           </p>
         ) : (
           <ul className="space-y-4">
-            {criteria.map((criterion) => (
+            {initialCriteria.map((criterion) => (
               <li key={criterion.responseId}>
                 <div className="mb-2 px-1 text-xs font-semibold tabular-nums text-slate-500">
                   Critério {criterion.orderIndex + 1} ·{" "}
@@ -391,7 +387,7 @@ export function ValidationFullFormView({
           page={safePage}
           pageSize={pageSize}
           totalItems={totalItems}
-          pageItemCount={criteria.length}
+          pageItemCount={initialCriteria.length}
           onPageChange={(nextPage) => replaceParams({ page: nextPage })}
         />
       </div>

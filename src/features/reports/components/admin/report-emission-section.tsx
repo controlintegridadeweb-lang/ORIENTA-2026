@@ -116,6 +116,7 @@ export function ReportEmissionSection({ controller }: { controller: ReportsContr
 
         {selectedCycle ? (
           <ReportReferencePeriodEditor
+            key={selectedCycle.cycleId}
             cycle={selectedCycle}
             disabled={state.generating || state.loadingCycles}
             onSaved={async (reference) => saveReferencePeriod(reference)}
