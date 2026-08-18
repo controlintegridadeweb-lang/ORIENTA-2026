@@ -11,7 +11,7 @@ export type RecommendationHierarchySource = {
   questionOrder: number;
 };
 
-export type RecommendationSectionGroup<T extends RecommendationHierarchySource> = {
+type RecommendationSectionGroup<T extends RecommendationHierarchySource> = {
   sectionId: string;
   sectionName: string;
   sectionOrder: number;

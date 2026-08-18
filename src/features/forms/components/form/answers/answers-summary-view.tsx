@@ -8,7 +8,7 @@ import { PaginationControls } from "@/shared/ui/components/pagination-controls";
 import { buildPageNumbers } from "@/shared/hooks/use-pagination";
 import { AnswersSummaryQuestionCard } from "./answers-summary-question-card";
 
-export const DEFAULT_ANSWERS_SUMMARY_PAGE_SIZE = 10;
+const DEFAULT_ANSWERS_SUMMARY_PAGE_SIZE = 10;
 
 export function parseAnswersSummaryPage(value: string | null | undefined): number {
   const parsed = Number(value);

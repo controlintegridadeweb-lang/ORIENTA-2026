@@ -2,27 +2,6 @@ import type { RGB } from "pdf-lib";
 import type { Cursor, OrientaPdfDocument } from "./document";
 import { contentWidth, reportTheme } from "./theme";
 
-export function statusLabelPt(status: string): string {
-  const map: Record<string, string> = {
-    generated: "Gerada",
-    in_action_plan: "Em execução",
-    awaiting_approval: "Execução concluída — aguardando aceite",
-    adjustment_requested: "Ajuste solicitado",
-    exception_requested: "Exceção em análise",
-    completed: "Aprovada",
-    dismissed: "Dispensada",
-    not_started: "Não iniciado",
-    in_progress: "Em andamento",
-    cancelled: "Cancelada",
-    approved: "Aprovada",
-    pending: "Pendente",
-    submitted: "Enviada",
-    invalidated: "Não aprovada",
-    not_required: "Não exigida",
-  };
-  return map[status] ?? status.replace(/_/g, " ");
-}
-
 export function drawBadge(
   doc: OrientaPdfDocument,
   page: Cursor["page"],
@@ -49,36 +28,6 @@ export function drawBadge(
     color: colors.text,
   });
   return w + 6;
-}
-
-export function drawProgressBar(
-  page: Cursor["page"],
-  x: number,
-  y: number,
-  width: number,
-  pct: number,
-  fillColor = reportTheme.brand,
-): void {
-  const h = 8;
-  const clamped = Math.max(0, Math.min(100, pct));
-  page.drawRectangle({
-    x,
-    y: y - h,
-    width,
-    height: h,
-    color: reportTheme.slate100,
-    borderColor: reportTheme.slate200,
-    borderWidth: 0.5,
-  });
-  if (clamped > 0) {
-    page.drawRectangle({
-      x,
-      y: y - h,
-      width: (width * clamped) / 100,
-      height: h,
-      color: fillColor,
-    });
-  }
 }
 
 export function drawKpiTile(
@@ -223,13 +172,3 @@ export function drawSparkline(
   return { page: cur.page, y: y0 - 16 };
 }
 
-export function recommendationAccent(type: string): { bg: RGB; text: RGB; border: RGB } {
-  const t = type.toLowerCase();
-  if (t === "risk" || t === "weakness") {
-    return { bg: reportTheme.roseBg, text: reportTheme.rose, border: reportTheme.rose };
-  }
-  if (t === "opportunity" || t === "strength") {
-    return { bg: reportTheme.emeraldBg, text: reportTheme.emerald, border: reportTheme.emerald };
-  }
-  return { bg: reportTheme.skyBg, text: reportTheme.sky, border: reportTheme.sky };
-}

@@ -45,7 +45,7 @@ export const PORTFOLIO_PDF_SPACE = {
 const VALUE_SIZE = 10;
 const BODY_LEADING = 15;
 
-export type PdfContextField = readonly [label: string, value: string];
+type PdfContextField = readonly [label: string, value: string];
 
 export type PdfContextFields = {
   left: readonly PdfContextField[];

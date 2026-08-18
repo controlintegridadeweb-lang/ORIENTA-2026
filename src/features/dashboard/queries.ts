@@ -4,7 +4,6 @@ import {
   countOfficialRecommendationsForOverview,
   countPlansInProgressForOverview,
   countPublishedFormsForOverview,
-  mapActionPlanStatusMetrics,
 } from "@/features/dashboard/admin-overview-kpis";
 import {
   getCachedEvidenceMetricsForOrganization,
@@ -17,7 +16,6 @@ import {
 import { adminPlanPendencyHref } from "@/features/admin";
 import { loadOpenRecommendationsWithoutPlan } from "@/features/improvement-management/server";
 import type { EvidenceStatusBreakdown } from "@/features/dashboard/types";
-import type { PlanStatus } from "@/features/improvement-management";
 
 const PENDENCY_AWAITING_ACTION_TITLE = "Aguardando ação da organização";
 
@@ -91,15 +89,6 @@ export async function countRecommendationsGlobal(): Promise<number> {
 /** Ações em andamento na mesma definição de `/admin/plano-acao?status=in_progress`. */
 export async function countPlansInProgressGlobal(): Promise<number> {
   return countPlansInProgressForOverview(getClient());
-}
-
-export async function countActionPlansByStatusGlobal(): Promise<
-  Record<PlanStatus, number>
-> {
-  const client = getClient();
-  const { data, error } = await client.rpc("get_action_plan_status_metrics", {});
-  if (error) throw error;
-  return mapActionPlanStatusMetrics(data ?? []);
 }
 
 export async function evidenceStatusBreakdownGlobal(): Promise<EvidenceStatusBreakdown> {

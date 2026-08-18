@@ -115,7 +115,7 @@ export const SUPPORTING_SOURCE_COLUMNS = Object.freeze(
     .sort((a, b) => a - b),
 );
 
-export function bindingForSupportingColumn(sourceColumn) {
+function bindingForSupportingColumn(sourceColumn) {
   const binding = SUPPORTING_COLUMN_BINDINGS[sourceColumn];
   if (!binding) {
     throw new Error(

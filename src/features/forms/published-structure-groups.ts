@@ -1,6 +1,6 @@
 import type { PublishedFormQuestion } from "./published-structure-types";
 
-export type PublishedStructureSectionGroup = {
+type PublishedStructureSectionGroup = {
   sectionName: string;
   questions: PublishedFormQuestion[];
 };
@@ -10,7 +10,7 @@ export type PublishedStructureAxisGroup = {
   sections: PublishedStructureSectionGroup[];
 };
 
-export const PUBLISHED_STRUCTURE_PAGE_SIZES = [5, 10, 20] as const;
+const PUBLISHED_STRUCTURE_PAGE_SIZES = [5, 10, 20] as const;
 export type PublishedStructurePageSize = (typeof PUBLISHED_STRUCTURE_PAGE_SIZES)[number];
 export const DEFAULT_PUBLISHED_STRUCTURE_PAGE_SIZE: PublishedStructurePageSize = 10;
 

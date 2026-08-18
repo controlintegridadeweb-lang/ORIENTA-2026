@@ -120,10 +120,6 @@ async function downloadExportFile(url: string, fallbackFilename: string): Promis
   URL.revokeObjectURL(objectUrl);
 }
 
-export function exportAdminActionPlansCsv(query: AdminActionPlanMonitoringQuery): Promise<void> {
-  return exportAdminActionPlans(query, "csv");
-}
-
 export function exportAdminActionPlans(
   query: AdminActionPlanMonitoringQuery,
   format: "csv" | "xlsx" | "pdf" = "csv",
@@ -139,12 +135,6 @@ export function exportAdminActionPlans(
     `/api/admin/action-plans/monitoring?${params.toString()}`,
     fallback,
   );
-}
-
-export function exportAdminRecommendationsCsv(
-  query: AdminRecommendationMonitoringQuery,
-): Promise<void> {
-  return exportAdminRecommendations(query, "csv");
 }
 
 export function exportAdminRecommendations(

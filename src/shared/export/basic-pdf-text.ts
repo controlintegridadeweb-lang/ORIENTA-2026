@@ -54,7 +54,7 @@ export function basicPdfContentWidth(ctx: BasicPdfTextContext, indent = 0): numb
   return ctx.pageSize[0] - 2 * ctx.marginX - indent;
 }
 
-export function basicPdfLineHeight(size: number): number {
+function basicPdfLineHeight(size: number): number {
   return size + 4;
 }
 

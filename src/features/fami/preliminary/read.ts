@@ -3,7 +3,7 @@ import "server-only";
 import type { TypedSupabaseClient } from "@/infrastructure/supabase/server";
 import type { Quadrimester } from "./domain";
 
-export type PreliminaryCheckpoint = {
+type PreliminaryCheckpoint = {
   id: string;
   cycleId: string;
   referenceYear: number;
@@ -33,7 +33,7 @@ export type PreliminaryCheckpoint = {
   deltaPercentagePoints: number | null;
 };
 
-export type PreliminaryTrackingContext = {
+type PreliminaryTrackingContext = {
   officialAvailableAt: string | null;
   earliestActionCreatedAt: string | null;
 };

@@ -7,14 +7,14 @@ export type PendingMonitoringItem =
   | { kind: "deadline"; occurredAt: string; request: ActionPlanDeadlineChangeRequest }
   | { kind: "supervision"; occurredAt: string; note: SupervisionNoteEntry };
 
-export function isPendingSupervisionNote(note: SupervisionNoteEntry): boolean {
+function isPendingSupervisionNote(note: SupervisionNoteEntry): boolean {
   return (
     ["open", "acknowledged"].includes(note.lifecycleStatus)
     && ["adjustment_request", "pending"].includes(note.noteType)
   );
 }
 
-export function isPendingDeadlineRequest(
+function isPendingDeadlineRequest(
   request: ActionPlanDeadlineChangeRequest,
 ): boolean {
   return request.status === "pending";

@@ -1,49 +1,15 @@
 import { apiResponseSchema, buildHeaders, formatError, parseJson } from "@/infrastructure/api/fetch-client";
 import { objectContract } from "@/infrastructure/api/contract-schema";
 import type { DeadlineScope } from "./domain";
-import type { FormManagementDetails, FormManagementMutationResult } from "./types";
+import type { FormManagementMutationResult } from "./types";
 
-
-const formManagementDetailsContract = objectContract<FormManagementDetails>(
-  "detalhes de gestão do formulário",
-  {
-    formId: "string",
-    formName: "string",
-    formVersion: "number",
-    formVersionId: "string",
-    periodLabel: "string",
-    status: "string",
-    counts: "object",
-    actions: "array",
-    organizations: "array",
-    criteria: "array",
-    history: "array",
-  },
-);
 const formManagementMutationContract = objectContract<FormManagementMutationResult>(
   "resultado de alteração da aplicação",
   { batchId: "string", updated: "number", action: "string" },
 );
-const detailsResponseSchema = apiResponseSchema({ details: formManagementDetailsContract.optional() });
 const mutationResponseSchema = apiResponseSchema({ result: formManagementMutationContract.optional() });
 function formApplicationPath(formId: string, suffix = "") {
   return `/api/admin/form-applications/${encodeURIComponent(formId)}${suffix}`;
-}
-
-export async function fetchFormManagementDetails(input: {
-  formId: string;
-  periodLabel?: string;
-}): Promise<FormManagementDetails> {
-  const params = new URLSearchParams();
-  if (input.periodLabel) params.set("periodLabel", input.periodLabel);
-  const query = params.toString();
-  const res = await fetch(
-    `${formApplicationPath(input.formId)}${query ? `?${query}` : ""}`,
-    { headers: buildHeaders(), cache: "no-store" },
-  );
-  const body = await parseJson(res, detailsResponseSchema);
-  if (!res.ok || !body.details) throw new Error(formatError(body));
-  return body.details;
 }
 
 export async function changeFormApplicationDeadline(input: {

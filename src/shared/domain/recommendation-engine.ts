@@ -1,10 +1,5 @@
 import { isEligibleForRecommendation } from "./fami";
-import type {
-  QuestionInput,
-  RecommendationType,
-  RecommendationTrigger,
-  AdminProofStatus,
-} from "./types";
+import type { QuestionInput, RecommendationType, RecommendationTrigger } from "./types";
 
 export type InferRecommendationInput = Pick<
   QuestionInput,
@@ -65,4 +60,3 @@ export function inferRecommendationDetail(
   return null;
 }
 
-export type { AdminProofStatus };

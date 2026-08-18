@@ -2,12 +2,12 @@ import { isOfficialFamiEligible } from "@/shared/domain/workflow";
 import { respondentCycleStateLabelOrFallback } from "@/shared/domain/cycle-labels";
 import type { RespondentProgress } from "./contracts";
 
-export type PresentationAction = {
+type PresentationAction = {
   href: string;
   label: string;
 };
 
-export type PresentationProgress = {
+type PresentationProgress = {
   kind: "answers" | "corrections";
   completed: number;
   total: number;
@@ -36,11 +36,11 @@ function cycleReturnQuery(contextYear?: number): string {
     : "";
 }
 
-export function cycleResponsesHref(cycleId: string, contextYear?: number): string {
+function cycleResponsesHref(cycleId: string, contextYear?: number): string {
   return `/respondente/ciclos/${encodeURIComponent(cycleId)}${cycleReturnQuery(contextYear)}`;
 }
 
-export function cycleFamiResultHref(cycleId: string): string {
+function cycleFamiResultHref(cycleId: string): string {
   return `/respondente/pontuacao-fami?cycleId=${encodeURIComponent(cycleId)}`;
 }
 

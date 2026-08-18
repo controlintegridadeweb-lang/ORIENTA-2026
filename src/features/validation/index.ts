@@ -1,10 +1,7 @@
 export type {
   AbsentProofDecisionAction,
   EvidenceDecisionAction,
-  NotApplicableDecisionAction,
   UnifiedFormCriterion,
-  ValidationFormPageResult,
-  ValidationViewMode,
 } from "./contracts";
 export {
   resolveValidationFormQuery,
@@ -18,5 +15,4 @@ export {
 
 export {
   loadValidationFinalizationReadiness,
-  type ValidationFinalizationReadiness,
 } from "./server/validation-finalization-readiness-repository";

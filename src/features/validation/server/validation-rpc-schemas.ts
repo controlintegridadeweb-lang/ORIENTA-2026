@@ -6,7 +6,7 @@ export const validationPageRowSchema = z.object({
   total_count: z.coerce.number().int().nonnegative(),
 });
 
-export const validationSectionSummarySchema = z.object({
+const validationSectionSummarySchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
   axisId: z.string().uuid(),

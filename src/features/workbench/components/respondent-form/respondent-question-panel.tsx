@@ -8,7 +8,6 @@ import { type WorkbenchRow } from "@/features/workbench/load-workbench-payload";
 import type { YesEvidenceFieldErrors } from "@/features/workbench/validate-yes-evidence";
 import {
   canSaveYesEvidenceDraft,
-  validateYesEvidenceDraftForRow,
 } from "@/features/workbench/validate-evidence-draft";
 import { perguntaLabels } from "@/shared/labels/official-labels";
 
@@ -23,8 +22,6 @@ import { CriterionAutosaveIndicator } from "./criterion-autosave-indicator";
 import { CriterionScore } from "@/features/forms";
 import type { EvidenceDraft } from "@/features/workbench/evidence-draft";
 import type { CriterionAutosaveState } from "../criterion-answer-autosave";
-
-export type { EvidenceDraft } from "@/features/workbench/evidence-draft";
 
 export type RespondentSectionGroup = {
   name: string;
@@ -75,7 +72,6 @@ function axisLabelForSection(rows: WorkbenchRow[]): string | null {
 
 /** Mantém os nomes públicos usados pelas superfícies e testes existentes. */
 export const canSubmitYesWithEvidence = canSaveYesEvidenceDraft;
-export const validateYesWithEvidenceForRow = validateYesEvidenceDraftForRow;
 
 export type RespondentQuestionInteractionProps = {
   evidenceDrafts: Record<string, EvidenceDraft>;

@@ -29,16 +29,6 @@ export function deriveActionStatus(
   return "in_progress";
 }
 
-export function assertProgressPercentage(value: unknown): number {
-  if (typeof value !== "number" || !Number.isInteger(value)) {
-    throw new Error("progress_percentage_must_be_integer");
-  }
-  if (value < 0 || value > 100) {
-    throw new Error("progress_percentage_out_of_range");
-  }
-  return value;
-}
-
 /**
  * Progresso consolidado do plano: média dos percentuais das ações ativas
  * (canceladas excluídas). Sem ações ativas → 0.
@@ -67,7 +57,3 @@ export function progressFromPlans(plans: ProgressBearingAction[]): number {
  * Status que encerram um plano de ação (sem mais ação pendente).
  * Substitui comparações inline com strings literais.
  */
-export const PLAN_TERMINAL_STATUSES: ReadonlySet<PlanStatus> = new Set([
-  "completed",
-  "cancelled",
-]);

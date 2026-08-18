@@ -21,7 +21,7 @@ import type {
   ReportSectionView,
 } from "@/features/reports/pdf/report-types";
 
-export const DETAILED_ANALYSIS_CHAPTER_NUMBER = 5;
+const DETAILED_ANALYSIS_CHAPTER_NUMBER = 5;
 
 export const REPORT_EMPTY_SECTION_RECOMMENDATIONS =
   "Nenhuma recomendação foi gerada para esta seção.";

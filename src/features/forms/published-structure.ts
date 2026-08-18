@@ -5,7 +5,7 @@ import { createSupabaseServiceRoleClient } from "@/infrastructure/supabase/serve
 import { normalizeBindings } from "@/features/library";
 import type { PublishedFormQuestion, PublishedFormStructure } from "./published-structure-types";
 
-export type { PublishedFormQuestion, PublishedFormStructure } from "./published-structure-types";
+export type { PublishedFormStructure } from "./published-structure-types";
 
 const joinedQuestionSchema = z.object({
   question_id: z.string().uuid(),
@@ -41,7 +41,7 @@ function numberOrNull(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-export async function loadPublishedFormStructure(
+async function loadPublishedFormStructure(
   formVersionId: string,
 ): Promise<PublishedFormStructure | null> {
   const supabase = createSupabaseServiceRoleClient();

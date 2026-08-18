@@ -37,7 +37,7 @@ export type RecommendationPrimaryAction = {
   variant: "primary" | "secondary";
 };
 
-export type RecommendationSecondaryDetails = {
+type RecommendationSecondaryDetails = {
   observations?: string;
   reasonLabel?: string;
 };

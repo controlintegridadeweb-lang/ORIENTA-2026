@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const closeDuePreliminaryResultSchema = z.object({
+const closeDuePreliminaryResultSchema = z.object({
   ok: z.boolean(),
   closed: z.number().int().nonnegative(),
   skipped: z.number().int().nonnegative(),

@@ -27,7 +27,7 @@ export type ReportFamiSectionScore = {
   pointsPossible: number;
 };
 
-export type ReportFamiAxisScore = {
+type ReportFamiAxisScore = {
   axisId: string | null;
   axisName: string;
   percentage: number;
@@ -134,7 +134,7 @@ export type ReportEvolutionPoint = {
   axisPercentages: Record<string, number | null>;
 };
 
-export type ReportDocumentIdentity = {
+type ReportDocumentIdentity = {
   reportId: string;
   emissionVersion: number;
   generatedByLabel: string;
@@ -194,7 +194,7 @@ export type ReportRecommendationView = {
   actions: ReportActionView[];
 };
 
-export type ReportSectionSummaryView = {
+type ReportSectionSummaryView = {
   name: string;
   pointsObtained: number | null;
   pointsPossible: number | null;
@@ -213,7 +213,7 @@ export type ReportSectionView = {
   recommendations: ReportRecommendationView[];
 };
 
-export type ReportAxisSummaryView = {
+type ReportAxisSummaryView = {
   name: string;
   pointsObtained: number | null;
   pointsPossible: number | null;

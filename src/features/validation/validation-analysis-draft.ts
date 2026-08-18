@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const validationDraftTargetKindSchema = z.enum([
+const validationDraftTargetKindSchema = z.enum([
   "evidence",
   "not_applicable",
   "absent_proof",

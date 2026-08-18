@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const DIAGNOSTIC_INTEGRITY_2026_CATALOG_PATH = resolve(
+const DIAGNOSTIC_INTEGRITY_2026_CATALOG_PATH = resolve(
   here,
   "../reference/diagnostico-integridade-2026.questions.json",
 );

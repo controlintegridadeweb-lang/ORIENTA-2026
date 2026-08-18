@@ -9,7 +9,7 @@ import {
   selectLatestCheckpoint,
 } from "@/features/fami/preliminary/panel-presentation";
 
-export type PreliminaryScore = {
+type PreliminaryScore = {
   pointsObtained: number;
   pointsPossible: number;
   percentage: number;
@@ -34,7 +34,7 @@ export type PreliminaryCheckpoint = {
   deltaPercentagePoints: number | null;
 };
 
-export type PreliminaryTrackingContext = {
+type PreliminaryTrackingContext = {
   officialAvailableAt: string | null;
   earliestActionCreatedAt: string | null;
 };

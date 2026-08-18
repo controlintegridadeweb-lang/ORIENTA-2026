@@ -137,13 +137,7 @@ export const respondentActionCommandSchema = z.discriminatedUnion("intent", [
 
 export type RespondentActionCommand = z.infer<typeof respondentActionCommandSchema>;
 
-/** @deprecated Use `respondentActionCommandSchema` — mantido como alias tipado. */
-export const saveActionPlanSchema = respondentActionCommandSchema;
-
-export { progressPercentageSchema };
-
-
-export const deadlineChangeStatusSchema = z.enum(["pending", "approved", "rejected"]);
+const deadlineChangeStatusSchema = z.enum(["pending", "approved", "rejected"]);
 export type DeadlineChangeStatus = z.infer<typeof deadlineChangeStatusSchema>;
 
 export const requestActionPlanDeadlineChangeSchema = z
@@ -191,7 +185,7 @@ export const deleteActionPlanSchema = z
   .strict();
 
 /** Tipos persistidos e exibidos no histórico de supervisão. */
-export const supervisionNoteTypeSchema = z.enum([
+const supervisionNoteTypeSchema = z.enum([
   "comment",
   "adjustment_request",
   "opinion",
@@ -202,7 +196,7 @@ export const supervisionNoteTypeSchema = z.enum([
 export type SupervisionNoteType = z.infer<typeof supervisionNoteTypeSchema>;
 export type SupervisionNoteComposerType = SupervisionNoteType;
 
-export const supervisionLifecycleStatusSchema = z.enum([
+const supervisionLifecycleStatusSchema = z.enum([
   "recorded",
   "open",
   "acknowledged",

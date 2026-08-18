@@ -143,7 +143,7 @@ function extractXlsxArchive(filePath, extractionDirectory) {
   });
 }
 
-export function readFirstWorksheet(filePath) {
+function readFirstWorksheet(filePath) {
   if (!existsSync(filePath)) throw new Error(`Planilha não encontrada: ${filePath}`);
   const extractionDirectory = mkdtempSync(join(tmpdir(), "orienta-xlsx-"));
   try {
@@ -216,7 +216,7 @@ function parseCsvRows(source) {
   return rows;
 }
 
-export function readCsvWorksheet(filePath) {
+function readCsvWorksheet(filePath) {
   if (!existsSync(filePath)) throw new Error(`Planilha não encontrada: ${filePath}`);
   const source = readFileSync(filePath, "utf8").replace(/^\uFEFF/, "");
   return parseCsvRows(source).map((cells) =>

@@ -187,7 +187,7 @@ export type OpenCyclesBatchInput = Omit<
   responseDeadlineAt: string;
 };
 
-export type CycleBatchMode = "draft" | "open" | "schedule";
+type CycleBatchMode = "draft" | "open" | "schedule";
 
 export type ProcessCyclesBatchInput = CreateCyclesBatchInput & {
   mode: CycleBatchMode;
@@ -196,7 +196,7 @@ export type ProcessCyclesBatchInput = CreateCyclesBatchInput & {
   cycleCloseAt?: string | null;
 };
 
-export type CycleSchedulesResult = {
+type CycleSchedulesResult = {
   jobsCreated: number;
   remindersScheduled: number;
 };

@@ -26,7 +26,7 @@ const recommendationStatusSchema = z.enum([
   "completed",
   "dismissed",
 ]);
-export const actionPlanDocumentSchema = z.object({
+const actionPlanDocumentSchema = z.object({
   id: z.string(),
   actionRevision: z.number().int().positive(),
   kind: z.enum(["file", "link"]),
@@ -58,7 +58,7 @@ const actionPlanActionSchema = z.object({
   slaLabel: z.enum(["ok", "due_soon", "overdue", "na"]),
 });
 
-export const actionPlanListItemSchema: ZodType<ActionPlanListItem> = z.object({
+const actionPlanListItemSchema: ZodType<ActionPlanListItem> = z.object({
   recommendationId: z.string(),
   questionId: z.string(),
   cycleId: z.string().optional(),

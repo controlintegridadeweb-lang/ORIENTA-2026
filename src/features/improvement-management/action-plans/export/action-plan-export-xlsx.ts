@@ -9,7 +9,7 @@ import {
 
 type NodeFileContent = Buffer | import("node:stream").Stream | import("node:buffer").Blob;
 
-export async function buildActionPlanXlsx(
+async function buildActionPlanXlsx(
   rows: readonly RecommendationPortfolioExportRow[],
 ): Promise<{ filename: string; content: Buffer }> {
   const sheets = buildActionPlanXlsxSheets<NodeFileContent>(rows);

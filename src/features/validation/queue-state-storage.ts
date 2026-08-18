@@ -45,11 +45,3 @@ export function loadQueueBatchSelection(
   }
 }
 
-export function clearQueueBatchSelection(cycleId: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.sessionStorage.removeItem(selectionKey(cycleId));
-  } catch {
-    // ignore
-  }
-}

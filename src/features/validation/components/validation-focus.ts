@@ -1,6 +1,6 @@
 import type { UnifiedFormCriterion } from "../contracts";
 
-export function focusCriterion(responseId: string): boolean {
+function focusCriterion(responseId: string): boolean {
   const element = document.getElementById(`criterion-${responseId}`);
   if (!element) return false;
   element.scrollIntoView({ behavior: "smooth", block: "start" });

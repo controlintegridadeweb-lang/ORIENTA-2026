@@ -1,5 +1,5 @@
 /** Tamanhos de página permitidos na fila de validação. */
-export const VALIDATION_PAGE_SIZES = [10, 20, 50] as const;
+const VALIDATION_PAGE_SIZES = [10, 20, 50] as const;
 export type ValidationPageSize = (typeof VALIDATION_PAGE_SIZES)[number];
 export const DEFAULT_VALIDATION_PAGE_SIZE: ValidationPageSize = 10;
 

@@ -12,18 +12,18 @@ const ANSWER_LABELS = {
   not_applicable: "Não se aplica",
 } as const;
 
-export type AnswerChartKey = keyof typeof ANSWER_LABELS;
+type AnswerChartKey = keyof typeof ANSWER_LABELS;
 
 const ANSWER_KEYS: readonly AnswerChartKey[] = ["yes", "no", "not_applicable"];
 
-export type AnswerChartSegment = {
+type AnswerChartSegment = {
   key: AnswerChartKey;
   label: string;
   value: number;
   color: string;
 };
 
-export type AnswerChartLegendItem = AnswerChartSegment & {
+type AnswerChartLegendItem = AnswerChartSegment & {
   percentage: number;
 };
 

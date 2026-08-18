@@ -4,7 +4,7 @@ import { Check, FileWarning, Paperclip } from "lucide-react";
 import type { WorkbenchRow } from "@/features/workbench/load-workbench-payload";
 import { resolvePersistedEvidences } from "./resolve-persisted-evidences";
 
-export type EvidenceStatusAnswer = "yes" | "no" | "not_applicable" | null;
+type EvidenceStatusAnswer = "yes" | "no" | "not_applicable" | null;
 
 /**
  * Estado consolidado das evidências vinculadas à resposta.

@@ -293,4 +293,3 @@ export function useCycleActionsController(cycle: CycleListItem) {
   };
 }
 
-export type CycleActionsController = ReturnType<typeof useCycleActionsController>;

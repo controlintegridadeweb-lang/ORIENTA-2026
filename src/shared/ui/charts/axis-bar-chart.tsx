@@ -28,7 +28,7 @@ const DENSITY = {
   },
 } as const;
 
-export type AxisBarDatum = {
+type AxisBarDatum = {
   axisId?: string | null;
   axisName: string;
   percentage: number;

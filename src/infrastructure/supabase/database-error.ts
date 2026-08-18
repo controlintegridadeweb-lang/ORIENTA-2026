@@ -1,5 +1,5 @@
 /** Estrutura mínima compartilhada pelos erros do PostgreSQL, PostgREST e Supabase. */
-export type DatabaseErrorLike = {
+type DatabaseErrorLike = {
   code?: unknown;
   message?: unknown;
   details?: unknown;

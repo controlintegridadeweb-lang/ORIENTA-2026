@@ -1,6 +1,6 @@
 import type { WorkbenchPayload, Row } from "./workbench-helpers";
 
-export type AutosaveStatus = "idle" | "saving" | "saved" | "error";
+type AutosaveStatus = "idle" | "saving" | "saved" | "error";
 
 export type CriterionAutosaveState = {
   status: AutosaveStatus;
@@ -8,13 +8,6 @@ export type CriterionAutosaveState = {
 };
 
 export type CriterionAnswerValue = "yes" | "no" | "not_applicable";
-
-export type SaveCriterionAnswerInput = {
-  applicationId: string;
-  criterionId: string;
-  answer: CriterionAnswerValue;
-  justification?: string;
-};
 
 /** Debounce de campos textuais (justificativa N/A): 500–800 ms. */
 export const AUTOSAVE_TEXT_DEBOUNCE_MS = 600;

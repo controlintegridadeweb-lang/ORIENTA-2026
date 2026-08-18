@@ -41,4 +41,3 @@ export const questionLibraryConfigurationInputSchema = z.object({
   responseMapping: z.object({}).strict().default({}),
 });
 
-export type QuestionLibraryConfigurationInput = z.infer<typeof questionLibraryConfigurationInputSchema>;

@@ -102,8 +102,6 @@ export const RECOMMENDATION_TYPE_LABELS = {
   evidencia_insuficiente: "Evidência insuficiente",
 } as const;
 
-export type RecommendationTypeKey = keyof typeof RECOMMENDATION_TYPE_LABELS;
-
 const RECOMMENDATION_TYPE_REGISTRY: Record<string, StatusRegistryEntry> = {
   nao_implementacao: entry({
     key: "nao_implementacao",
@@ -203,7 +201,7 @@ const FALLBACK_ENTRY: StatusRegistryEntry = entry({
   priority: 999,
 });
 
-export function recommendationTypeEntry(type: string): StatusRegistryEntry {
+function recommendationTypeEntry(type: string): StatusRegistryEntry {
   const key = type.trim();
   if (!key) return FALLBACK_ENTRY;
   return RECOMMENDATION_TYPE_REGISTRY[key] ?? { ...FALLBACK_ENTRY, key };

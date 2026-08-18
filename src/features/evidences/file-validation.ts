@@ -144,16 +144,6 @@ export function verifyUploadedFileSize(
 }
 
 /** Office/OpenXML não entram na allowlist desta versão. */
-export function evidenceFileNeedsArchiveInspection(_descriptor: EvidenceFileDescriptor): boolean {
-  return false;
-}
-
-export function verifyEvidenceArchiveStructure(
-  _descriptor: EvidenceFileDescriptor,
-  _centralDirectoryBytes: Uint8Array,
-): void {
-  // Allowlist atual não inclui contêineres ZIP/OpenXML.
-}
 
 export function verifyEvidenceFileSignature(
   descriptor: EvidenceFileDescriptor,
@@ -315,11 +305,3 @@ export function verifyPdfPageBudget(headerAndSample: Uint8Array): void {
   }
 }
 
-export const EVIDENCE_FILE_LIMITS = {
-  maxBytes: MAX_EVIDENCE_FILE_BYTES,
-  maxImageDimensionPx: MAX_IMAGE_DIMENSION_PX,
-  maxImagePixels: MAX_IMAGE_PIXELS,
-  maxPdfPages: MAX_PDF_PAGES,
-  allowedExtensions: ["pdf", "png", "jpg", "jpeg", "webp"] as const,
-  allowedMimeTypes: ["application/pdf", "image/png", "image/jpeg", "image/webp"] as const,
-} as const;

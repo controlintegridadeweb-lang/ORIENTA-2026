@@ -1,7 +1,7 @@
 import { logError } from "@/infrastructure/observability/logger";
 
 /** Nome estável do fator TOTP administrativo. */
-export const ADMIN_TOTP_FRIENDLY_NAME = "ORIENTA Administrador";
+const ADMIN_TOTP_FRIENDLY_NAME = "ORIENTA Administrador";
 
 export type MfaStage =
   | "session"
@@ -99,11 +99,6 @@ export class MfaFlowError extends Error {
 let prepareInflight: Promise<MfaSetup> | null = null;
 let verifyInflight: Promise<void> | null = null;
 
-export function __resetMfaEnrollmentStateForTests() {
-  prepareInflight = null;
-  verifyInflight = null;
-}
-
 function createRequestId(): string {
   if (typeof globalThis.crypto?.randomUUID === "function") {
     return globalThis.crypto.randomUUID();
@@ -111,7 +106,7 @@ function createRequestId(): string {
   return `mfa_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function readAuthErrorDetails(error: unknown): MfaAuthErrorDetails {
+function readAuthErrorDetails(error: unknown): MfaAuthErrorDetails {
   if (!error || typeof error !== "object") {
     return {
       name: null,
@@ -134,7 +129,7 @@ export function readAuthErrorDetails(error: unknown): MfaAuthErrorDetails {
   };
 }
 
-export function classifyMfaAuthError(
+function classifyMfaAuthError(
   error: unknown,
   stage: MfaStage,
 ): MfaUserErrorCode {

@@ -20,8 +20,6 @@ export const ACTION_PLAN_EXPORT_HEADERS = [
   "Última atualização",
 ] as const;
 
-export type ActionPlanExportHeader = (typeof ACTION_PLAN_EXPORT_HEADERS)[number];
-
 export type ActionPlanExportFormat = "xlsx" | "pdf";
 
 /**

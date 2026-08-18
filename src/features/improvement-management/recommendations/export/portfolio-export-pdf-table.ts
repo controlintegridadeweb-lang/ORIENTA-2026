@@ -18,7 +18,7 @@ const CELL_SIZE = 8;
 const HEADER_SIZE = 7;
 const ROW_LINE = 11;
 
-export type ActionTableColumnKey =
+type ActionTableColumnKey =
   | "title"
   | "responsible"
   | "startDate"

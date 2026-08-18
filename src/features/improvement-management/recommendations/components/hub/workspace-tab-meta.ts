@@ -29,7 +29,7 @@ export const WORKSPACE_TABS: WorkspaceTabMeta[] = [
   },
 ];
 
-export function workspaceTabFromPathname(pathname: string): WorkspaceTabKey {
+function workspaceTabFromPathname(pathname: string): WorkspaceTabKey {
   if (pathname.endsWith("/monitoramento")) return "monitoring";
   if (pathname.endsWith("/acoes")) return "actions";
   return "overview";

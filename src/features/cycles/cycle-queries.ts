@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { CycleState } from "@/shared/domain/types";
-import type { Database } from "@/infrastructure/supabase/database.types";
 
 /**
  * Read model de ciclos (consulta, não escrita).
@@ -59,25 +58,6 @@ export type CycleListFilters = {
   periodId?: string;
   /** Compat de leitura; preferir periodId. */
   periodLabel?: string;
-};
-
-export type CycleListPageFilters = CycleListFilters & {
-  search?: string;
-  dueFilter?: "all" | "overdue" | "in_response";
-  limit: number;
-  offset: number;
-};
-
-export type CycleListPage = {
-  items: CycleListItem[];
-  total: number;
-  limit: number;
-  offset: number;
-};
-
-export type CycleListMetrics = {
-  total: number;
-  overdue: number;
 };
 
 const cycleStateSchema = z.enum([
@@ -220,72 +200,6 @@ function mapJoined(
  * Read model paginado para a tela administrativa. Filtros, ordenação, contagem
  * e recorte são executados no PostgreSQL; o servidor recebe apenas a página.
  */
-export async function listCyclesPage(
-  supabase: SupabaseClient,
-  filters: CycleListPageFilters,
-): Promise<CycleListPage> {
-  const { data, error } = await supabase.rpc("list_cycles_page", {
-    p_search: filters.search?.trim() || null,
-    p_organization_id: filters.organizationId ?? null,
-    p_form_id: filters.formId ?? null,
-    p_states: filters.states?.length ? filters.states : null,
-    p_period_label: filters.periodLabel?.trim() || null,
-    p_due_filter: filters.dueFilter ?? "all",
-    p_limit: filters.limit,
-    p_offset: filters.offset,
-  });
-  if (error) throw error;
-  type RpcRow = Database["public"]["Functions"]["list_cycles_page"]["Returns"][number];
-  const rows = (data ?? []) as RpcRow[];
-  return {
-    items: rows.map((row) => ({
-      id: row.id,
-      state: row.state,
-      periodId: "",
-      periodLabel: row.period_label,
-      organizationId: row.organization_id,
-      organizationName: row.organization_name,
-      organizationAcronym: row.organization_acronym,
-      formId: row.form_id,
-      formName: row.form_name,
-      formVersionId: row.form_version_id,
-      formVersion: row.form_version,
-      reopenCount: row.reopen_count,
-      startsAt: row.starts_at,
-      responseDeadlineAt: row.response_deadline_at,
-      originalResponseDeadlineAt: null,
-      validationDeadlineAt: row.validation_deadline_at,
-      cycleCloseAt: row.cycle_close_at,
-      submittedLateAt: row.submitted_late_at,
-      submissionDelaySeconds: row.submission_delay_seconds,
-      closedAt: row.closed_at,
-      responseCollectionPausedAt: null,
-      deadlineChangeCount: 0,
-      workingProcessingId: row.working_processing_id,
-      workingProcessingVersion: row.working_processing_version,
-    })),
-    total: Number(rows[0]?.total_count ?? 0),
-    limit: filters.limit,
-    offset: filters.offset,
-  };
-}
-
-export async function getCycleListMetrics(
-  supabase: SupabaseClient,
-  filters: Omit<CycleListPageFilters, "limit" | "offset">,
-): Promise<CycleListMetrics> {
-  const { data, error } = await supabase.rpc("get_cycle_metrics", {
-    p_search: filters.search?.trim() || null,
-    p_organization_id: filters.organizationId ?? null,
-    p_form_id: filters.formId ?? null,
-    p_states: filters.states?.length ? filters.states : null,
-    p_period_label: filters.periodLabel?.trim() || null,
-    p_due_filter: filters.dueFilter ?? "all",
-  });
-  if (error) throw error;
-  const row = data?.[0];
-  return { total: Number(row?.total ?? 0), overdue: Number(row?.overdue ?? 0) };
-}
 
 /**
  * Resolve UM ciclo enriquecido por id, ou null. Atalho de leitura para telas de

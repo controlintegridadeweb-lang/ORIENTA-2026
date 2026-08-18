@@ -1,7 +1,6 @@
 import { structuralAxisOrderIndex } from "@/shared/domain/axis";
 import type { AxisMaturity } from "@/features/fami/types";
 import {
-  axisThemeKeyForName,
   getAxisThemeStrict,
   AXIS_THEME_FALLBACK_PRIMARY,
   type AxisThemeKey,
@@ -47,12 +46,6 @@ export const FAMI_AXIS_COLORS = {
   environmental: AXIS_COLORS.environmental.accent,
   social: AXIS_COLORS.social.accent,
 } as const;
-
-/** Tokens de cor do eixo; `undefined` quando o nome não é estrutural. */
-export function axisColorsForName(axisName: string) {
-  const key = axisThemeKeyForName(axisName);
-  return key ? AXIS_COLORS[key] : undefined;
-}
 
 /** Cor sólida de apresentação do eixo; `undefined` quando o nome não é estrutural. */
 export function colorForAxisName(axisName: string): string | undefined {

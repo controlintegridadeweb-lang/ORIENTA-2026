@@ -1,11 +1,10 @@
 export {
   isDbActionPlanStatus,
   planStatusFromDb,
-  planStatusToDb,
   type DbActionPlanStatus,
 } from "./action-plans/plan-status-map";
 export type { PlanStatus } from "./action-plans/schemas";
-export { calculatePlanProgress, progressFromPlan } from "./action-plans/plan-progress";
+export { calculatePlanProgress } from "./action-plans/plan-progress";
 /** Exports seguros para Client Components. Serviços server-only: importe do arquivo específico. */
 export {
   getRespondentOverviewItems,

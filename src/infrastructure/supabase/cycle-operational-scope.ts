@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { CycleState } from "@/shared/domain/types";
 
-export type OperationalCycle = {
+type OperationalCycle = {
   id: string;
   formVersionId: string;
   organizationId: string;

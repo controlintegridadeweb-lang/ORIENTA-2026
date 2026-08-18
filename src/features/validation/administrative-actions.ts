@@ -5,11 +5,11 @@ import type {
 } from "./contracts";
 
 /** Ações primárias de validação exibidas na primeira linha do rodapé. */
-export type CriterionAdministrativePrimaryAction =
+type CriterionAdministrativePrimaryAction =
   | EvidenceDecisionAction
   | AbsentProofDecisionAction;
 
-export type CriterionAdministrativeActionKind =
+type CriterionAdministrativeActionKind =
   | "evidence_document"
   | "absent_proof"
   | "readonly";
@@ -133,22 +133,3 @@ function resolvePrimaryActions(
   return [];
 }
 
-export function isEvidencePrimaryAction(
-  action: CriterionAdministrativePrimaryAction,
-): action is EvidenceDecisionAction {
-  return (
-    action === "approve" ||
-    action === "invalidate" ||
-    action === "request_adjustment"
-  );
-}
-
-export function isAbsentProofPrimaryAction(
-  action: CriterionAdministrativePrimaryAction,
-): action is AbsentProofDecisionAction {
-  return (
-    action === "validate_without_proof" ||
-    action === "consider_insufficient" ||
-    action === "request_proof"
-  );
-}

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { apiResponseSchema } from "@/infrastructure/api/fetch-client";
 import { validationStatusSchema } from "./schemas";
 
-export const cycleStateSchema = z.enum([
+const cycleStateSchema = z.enum([
   "draft",
   "in_response",
   "submitted",
@@ -12,7 +12,7 @@ export const cycleStateSchema = z.enum([
   "completed",
 ]);
 
-export const evidenceValidationEntrySchema = z.object({
+const evidenceValidationEntrySchema = z.object({
   id: z.string(),
   status: validationStatusSchema,
   justification: z.string().nullable(),
@@ -20,7 +20,7 @@ export const evidenceValidationEntrySchema = z.object({
   validatedAt: z.string(),
 });
 
-export const evidenceListItemSchema = z.object({
+const evidenceListItemSchema = z.object({
   id: z.string(),
   responseId: z.string(),
   cycleId: z.string(),

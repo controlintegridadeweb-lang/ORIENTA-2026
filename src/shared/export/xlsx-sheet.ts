@@ -1,6 +1,6 @@
 import type { Feature } from "write-excel-file/browser";
 
-export const XLSX_HEADER_STYLE = {
+const XLSX_HEADER_STYLE = {
   fontWeight: "bold" as const,
   textColor: "#FFFFFF",
   backgroundColor: "#0F766E",

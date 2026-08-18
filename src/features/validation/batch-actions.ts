@@ -21,13 +21,13 @@ export type ValidationBatchOption = {
   justificationLabel: string;
 };
 
-export type ValidationBatchEvidenceItem = {
+type ValidationBatchEvidenceItem = {
   id: string;
   status: "pending" | "approved" | "invalidated" | "adjustment_requested";
   validatedAt: string | null;
 };
 
-export type ValidationBatchNotApplicableItem = {
+type ValidationBatchNotApplicableItem = {
   id: string;
   status: QueueNotApplicable["status"];
   validatedAt: string | null;

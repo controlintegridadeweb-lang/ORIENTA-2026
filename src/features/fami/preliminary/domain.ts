@@ -1,7 +1,5 @@
 import { levelForPercentage } from "@/shared/domain/fami-policy";
 
-export const FAMI_PRELIMINARY_METHODOLOGY_VERSION = "prelim_v1" as const;
-
 export type Quadrimester = 1 | 2 | 3;
 
 export type PreliminaryCriterionInput = {
@@ -112,7 +110,7 @@ export function quadrimesterPeriod(referenceYear: number, quadrimester: Quadrime
   return { start, end, label };
 }
 
-export function quadrimesterLastInstant(
+function quadrimesterLastInstant(
   referenceYear: number,
   quadrimester: Quadrimester,
 ): Date {
@@ -147,7 +145,7 @@ export function hasQuadrimesterStarted(
   return now.getTime() >= firstInstant.getTime();
 }
 
-export function happenedAtOrBefore(
+function happenedAtOrBefore(
   timestamp: string | null | undefined,
   limit: Date,
 ): boolean {

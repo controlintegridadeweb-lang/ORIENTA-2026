@@ -21,9 +21,6 @@ export const RECOMMENDATION_PORTFOLIO_EXPORT_HEADERS = [
   "Última atualização",
 ] as const;
 
-export type RecommendationPortfolioExportHeader =
-  (typeof RECOMMENDATION_PORTFOLIO_EXPORT_HEADERS)[number];
-
 /**
  * Fonte tipada para a exportação — composição dos dados já carregados
  * (recomendação + planos embutidos). Sem consultas adicionais.

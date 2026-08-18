@@ -1,4 +1,4 @@
-export type ValidationAutosaveStatus = "idle" | "saving" | "saved" | "error";
+type ValidationAutosaveStatus = "idle" | "saving" | "saved" | "error";
 
 export type ValidationAutosaveState = {
   status: ValidationAutosaveStatus;

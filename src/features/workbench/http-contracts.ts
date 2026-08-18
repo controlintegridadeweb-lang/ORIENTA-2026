@@ -6,7 +6,7 @@ export const yesEvidenceFieldErrorsSchema = z.object({
   title: z.string().optional(),
 });
 
-export const workbenchSavedResponseSchema = z.object({
+const workbenchSavedResponseSchema = z.object({
   id: z.string().uuid(),
   answer: z.enum(["yes", "no", "not_applicable"]),
   notes: z.string().nullable(),

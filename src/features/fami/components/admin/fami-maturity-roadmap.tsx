@@ -33,7 +33,7 @@ type MaturityLevelCardProps = {
  * Card de nível — estrutura da referência:
  * badge no topo → cabeçalho colorido (nome + faixa) → ilustração → rodapé itálico.
  */
-export function MaturityLevelCard({
+function MaturityLevelCard({
   level,
   isCurrent = false,
   isPast = false,

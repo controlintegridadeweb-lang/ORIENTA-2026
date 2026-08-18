@@ -1,13 +1,13 @@
 import { randomBytes } from "node:crypto";
 
-export const RESPONDENT_SEED_HEADERS = [
+const RESPONDENT_SEED_HEADERS = [
   "organization_name",
   "organization_acronym",
   "email",
   "full_name",
 ];
 
-export const RESPONDENT_CREDENTIAL_HEADERS = [
+const RESPONDENT_CREDENTIAL_HEADERS = [
   "organization_acronym",
   "email",
   "temporary_password",
@@ -20,7 +20,7 @@ const COMMON_WEAK_PASSWORDS = new Set([
   "qwerty123",
 ]);
 
-export function parseCsv(csv) {
+function parseCsv(csv) {
   const rows = [];
   let row = [];
   let value = "";
@@ -164,7 +164,6 @@ export function isWeakPassword(password) {
   ].filter(Boolean).length;
   return classes < 4;
 }
-
 
 export function parseRespondentCredentials(csv) {
   const rows = parseCsv(csv);

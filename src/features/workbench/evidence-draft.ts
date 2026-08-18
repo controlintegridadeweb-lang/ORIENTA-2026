@@ -1,4 +1,4 @@
-export type EvidenceAttachmentDraft = {
+type EvidenceAttachmentDraft = {
   clientId: string;
   kind: "file" | "link" | "text";
   title: string;

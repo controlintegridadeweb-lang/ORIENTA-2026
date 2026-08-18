@@ -84,9 +84,6 @@ export const SUPPORTED_FAMI_POLICY_VERSIONS = [
   "v7",
 ] as const;
 
-export type SupportedFamiPolicyVersion =
-  (typeof SUPPORTED_FAMI_POLICY_VERSIONS)[number];
-
 function policyVersionNumber(version: string): number {
   const match = /^v(\d+)$/.exec(version);
   return match ? Number(match[1]) : Number.NaN;

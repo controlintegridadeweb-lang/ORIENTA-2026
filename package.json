@@ -28,6 +28,7 @@
     "db:link": "node scripts/database/link.mjs",
     "dev:prod": "next dev --webpack -p 3002",
     "db:verify": "node scripts/database/verify.mjs",
+    "db:reload-postgrest": "node scripts/database/reload-postgrest.mjs",
     "db:greenfield": "node scripts/database/greenfield-pglite.mjs",
     "test:form-mgmt-rpc": "node scripts/database/form-management-rpc-pglite.mjs",
     "gen:types": "node scripts/database/generate-types.mjs",

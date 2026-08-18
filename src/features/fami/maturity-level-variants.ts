@@ -3,7 +3,7 @@
  * Card único: badge no topo → cabeçalho colorido → ilustração → rodapé com divisor.
  */
 
-export type MaturityLevelVariantKey =
+type MaturityLevelVariantKey =
   | "initial"
   | "developing"
   | "intermediate"
@@ -28,7 +28,7 @@ export type MaturityLevelVariant = {
 };
 
 /** Cores da referência visual da jornada FAMI. */
-export const maturityLevelVariants: Record<MaturityLevelVariantKey, MaturityLevelVariant> = {
+const maturityLevelVariants: Record<MaturityLevelVariantKey, MaturityLevelVariant> = {
   initial: {
     header: "bg-[#E12456]",
     headerText: "text-white",
@@ -122,7 +122,7 @@ export const MATURITY_LEVEL_CARD_LAYOUT = {
     "text-center text-[11px] italic leading-snug break-words text-slate-700 sm:text-xs",
 } as const;
 
-export const MATURITY_LEVEL_VARIANT_KEY: Record<1 | 2 | 3 | 4 | 5, MaturityLevelVariantKey> = {
+const MATURITY_LEVEL_VARIANT_KEY: Record<1 | 2 | 3 | 4 | 5, MaturityLevelVariantKey> = {
   1: "initial",
   2: "developing",
   3: "intermediate",

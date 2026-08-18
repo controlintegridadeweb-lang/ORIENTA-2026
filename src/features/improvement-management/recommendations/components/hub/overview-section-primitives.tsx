@@ -5,11 +5,10 @@ import {
 } from "@/features/improvement-management/recommendations/components/recommendation-card-field";
 import {
   recommendationCardShell,
-  recommendationHierarchySurface,
 } from "@/features/improvement-management/recommendations/components/recommendation-list-surface";
 
 /** Fundo dos painéis da Visão geral (referência). */
-export const OVERVIEW_SOFT_BG = "bg-[#E6F3F7]";
+const OVERVIEW_SOFT_BG = "bg-[#E6F3F7]";
 
 /** Item de metadado — mesmo padrão tipográfico dos cards do portfólio. */
 export function OverviewMetaItem({
@@ -96,34 +95,6 @@ export function OverviewSoftPanel({
   );
 }
 
-/** Casca branca com trilho — usada em Plano de ação / Monitoramento. */
-export function OverviewCardShell({
-  accentColor,
-  children,
-  className = "",
-}: {
-  accentColor?: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`${recommendationCardShell.article} hover:translate-y-0 hover:shadow-card ${className}`.trim()}
-    >
-      {accentColor ? (
-        <span
-          aria-hidden
-          className={recommendationCardShell.accentRail}
-          style={{ backgroundColor: accentColor }}
-        />
-      ) : null}
-      <div className={`${recommendationCardShell.body} ${accentColor ? "pl-5 sm:pl-6" : ""}`.trim()}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 /**
  * Destaque de texto.
  * - `brand`: caixa verde sólida + texto branco (pergunta / recomendação).
@@ -184,6 +155,4 @@ export const overviewNestedTable = {
 export {
   RecommendationCardField,
   RecommendationCardText,
-  recommendationCardShell,
-  recommendationHierarchySurface,
 };

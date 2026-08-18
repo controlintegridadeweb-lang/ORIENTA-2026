@@ -223,4 +223,3 @@ export function groupByStatus(
   }));
 }
 
-export { progressFromPlan } from "@/features/improvement-management/action-plans/plan-progress";

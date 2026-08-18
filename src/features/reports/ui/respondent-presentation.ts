@@ -12,14 +12,6 @@ export type RespondentReportKind = "executive";
 
 export const OFFICIAL_REPORT_KIND: RespondentReportKind = "executive";
 
-export type RespondentReportJobStatus =
-  | "queued"
-  | "processing"
-  | "completed"
-  | "failed"
-  | "outdated"
-  | "available";
-
 export type ReportKindMeta = {
   id: RespondentReportKind;
   label: string;
@@ -39,8 +31,6 @@ export const REPORT_KIND_META: Record<RespondentReportKind, ReportKindMeta> = {
     pdfSupported: true,
   },
 };
-
-
 
 /** Histórico alinhado à tabela `reports` + metadados de UI. */
 export type RespondentReportHistoryRow = {

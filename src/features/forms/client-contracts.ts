@@ -11,22 +11,22 @@ import type {
 } from "./answers-types";
 import type { FormPublishPending } from "./publish-contract";
 
-export const formSummaryContract = objectContract<FormSummary>("resumo do formulário", {
+const formSummaryContract = objectContract<FormSummary>("resumo do formulário", {
   id: "string", name: "string", version: "nullable-number", state: "string", createdAt: "string", questionCount: "number", publishedAt: "nullable-string",
 });
-export const questionRowContract = objectContract<QuestionRow>("critério do formulário", {
+const questionRowContract = objectContract<QuestionRow>("critério do formulário", {
   id: "string", prompt: "string", sectionId: "string", requiresEvidence: "boolean", allowsNotApplicable: "boolean", orderIndex: "number",
 });
-export const formPublishPendingContract = objectContract<FormPublishPending>("pendência de publicação", {
+const formPublishPendingContract = objectContract<FormPublishPending>("pendência de publicação", {
   questionId: "string", missing: "array",
 });
 type AssignmentOrganization = { id: string; name: string; assigned: boolean; locked: boolean };
 type AssignmentsSummary = { formId: string; organizationIds: string[] };
 
-export const assignmentOrganizationContract = objectContract<AssignmentOrganization>("organização atribuível", {
+const assignmentOrganizationContract = objectContract<AssignmentOrganization>("organização atribuível", {
   id: "string", name: "string", assigned: "boolean", locked: "boolean",
 });
-export const assignmentsSummaryContract = objectContract<AssignmentsSummary>("resumo de atribuições", {
+const assignmentsSummaryContract = objectContract<AssignmentsSummary>("resumo de atribuições", {
   formId: "string", organizationIds: "array",
 });
 

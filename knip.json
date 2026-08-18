@@ -4,9 +4,15 @@
     "src/infrastructure/supabase/database.types.ts"
   ],
   "ignoreBinaries": [
+    "age",
+    "pg_dump",
+    "pg_restore",
     "psql"
   ],
   "ignoreDependencies": [
     "supabase"
+  ],
+  "entry": [
+    "src/test/server-only-stub.ts"
   ]
 }

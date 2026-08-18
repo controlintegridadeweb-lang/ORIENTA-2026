@@ -4,7 +4,7 @@ export type NaValidationStatus = "pending" | "approved" | "rejected";
 export type AdminApplicabilityStatus = "not_applicable";
 
 export const NA_JUSTIFICATION_MIN_LENGTH = 20;
-export const ADMIN_NA_JUSTIFICATION_MIN_LENGTH = 1;
+const ADMIN_NA_JUSTIFICATION_MIN_LENGTH = 1;
 
 /**
  * N/A efetivo para FAMI/recomendação:

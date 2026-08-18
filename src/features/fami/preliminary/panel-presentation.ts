@@ -108,7 +108,7 @@ export type QuadrimesterRowKind =
   | "open_calculated"
   | "completed";
 
-export type QuadrimesterRowAction = "none" | "calculate" | "recalculate" | "view_details";
+type QuadrimesterRowAction = "none" | "calculate" | "recalculate" | "view_details";
 
 export type QuadrimesterCheckpointView = {
   percentage: number | null | undefined;
@@ -284,7 +284,7 @@ export function buildQuadrimesterDisplay(input: {
   };
 }
 
-export function formatPreliminaryCalculatedAt(iso: string | null | undefined): string | null {
+function formatPreliminaryCalculatedAt(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const date = formatPlatformDate(iso, { day: "2-digit", month: "2-digit", year: "numeric" }, "");
   const time = formatPlatformTime(iso, { hour: "2-digit", minute: "2-digit" }, "");
@@ -292,7 +292,7 @@ export function formatPreliminaryCalculatedAt(iso: string | null | undefined): s
   return `Calculado em ${date} às ${time}`;
 }
 
-export function formatPreliminaryClosedAt(iso: string | null | undefined): string | null {
+function formatPreliminaryClosedAt(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const date = formatPlatformDate(iso, { day: "2-digit", month: "2-digit", year: "numeric" }, "");
   if (!date) return null;

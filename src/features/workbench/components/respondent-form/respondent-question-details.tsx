@@ -4,7 +4,6 @@ import { AlertCircle, Check, FileWarning } from "lucide-react";
 import { formSurface } from "@/shared/layout/form-surface";
 import type { WorkbenchRow } from "@/features/workbench/load-workbench-payload";
 
-export { resolveEvidenceSectionDescription } from "./evidence-section-description";
 export { EvidenceDetails } from "./respondent-evidence-details";
 
 type StatusTone = "neutral" | "amber" | "emerald" | "rose";

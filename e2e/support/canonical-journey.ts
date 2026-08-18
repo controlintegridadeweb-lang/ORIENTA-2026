@@ -1,10 +1,10 @@
 import { expect, type Page } from "@playwright/test";
 
-export type WorkbenchPayload = {
+type WorkbenchPayload = {
   rows: Array<{ questionId: string; prompt: string; storagePath: string | null }>;
 };
 
-export type NotificationsPayload = {
+type NotificationsPayload = {
   notifications: Array<{
     kind: string;
     title: string;

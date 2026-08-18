@@ -5,17 +5,13 @@
  * navegação por seção, política de status de evidência e política de decisão.
  */
 export type {
-  AdminProofStatus,
-  EvidenceKind,
   EvidenceVerdict,
   NaQueueStatus,
   QueueEvidence,
   QueueEvidenceGroup,
   QueueNotApplicable,
   QueueProgress,
-  QueueSectionItem,
   QueueSectionNavGroup,
-  QueueSectionNavigation,
   QueueSectionSummary,
 } from "./queue-types";
 

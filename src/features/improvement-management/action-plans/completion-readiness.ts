@@ -4,7 +4,7 @@ import { pickOne } from "@/features/improvement-management/action-plans/domain-m
 import { queryActionPlanRecommendationRows } from "./cycle-read-model";
 import type { RecommendationRowRaw } from "./types";
 
-export const ACTION_PLAN_COMPLETION_BLOCK_REASONS = [
+const ACTION_PLAN_COMPLETION_BLOCK_REASONS = [
   "exception_pending",
   "missing_active_action",
   "action_not_completed",
@@ -13,10 +13,10 @@ export const ACTION_PLAN_COMPLETION_BLOCK_REASONS = [
   "action_not_approved",
 ] as const;
 
-export type ActionPlanCompletionBlockReason =
+type ActionPlanCompletionBlockReason =
   (typeof ACTION_PLAN_COMPLETION_BLOCK_REASONS)[number];
 
-export type ActionPlanCompletionBlock = {
+type ActionPlanCompletionBlock = {
   recommendationId: string;
   questionId: string;
   questionPrompt: string;

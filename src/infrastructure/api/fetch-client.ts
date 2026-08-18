@@ -1,6 +1,6 @@
 import { z, type ZodType } from "zod";
 
-export const apiIssueSchema = z.object({
+const apiIssueSchema = z.object({
   path: z.string(),
   message: z.string(),
 });
@@ -9,8 +9,6 @@ export const apiErrorSchema = z.object({
   error: z.string().optional(),
   issues: z.array(apiIssueSchema).optional(),
 }).passthrough();
-
-export type ApiError = z.infer<typeof apiErrorSchema>;
 
 export function apiResponseSchema<Shape extends z.ZodRawShape>(shape: Shape) {
   return z.object({

@@ -7,7 +7,7 @@ const reportOrganizationOptionSchema = z.object({
   name: z.string(),
 });
 
-export const reportCycleOptionSchema = z.object({
+const reportCycleOptionSchema = z.object({
   cycleId: z.string(),
   formId: z.string(),
   formName: z.string(),
@@ -23,7 +23,7 @@ export const reportCycleOptionSchema = z.object({
   latestEmissionVersion: z.number().int().nullable(),
 });
 
-export const reportHistoryOptionSchema = z.object({
+const reportHistoryOptionSchema = z.object({
   id: z.string(),
   cycleId: z.string(),
   cycleProcessingId: z.string(),

@@ -58,12 +58,6 @@ export function absentDecisionMeta(group: QueueEvidenceGroup): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-export function evidenceChoiceButtonClass(active: boolean): string {
-  return active
-    ? `${formSurface.secondaryButtonSm} border-brand-400 bg-brand-50 text-brand-900`
-    : formSurface.secondaryButtonSm;
-}
-
 /** Botão de decisão sobre evidência com peso visual distinto. */
 export function evidenceDecisionButtonClass(
   action: EvidenceDecisionAction,

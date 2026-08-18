@@ -2,7 +2,7 @@
  * O formulário operacional do ORIENTA usa respostas binárias. Esta estrutura
  * existe apenas para manter o contrato JSON do vínculo estável no banco.
  */
-export type ResponseMapping = Record<string, never>;
+type ResponseMapping = Record<string, never>;
 
 /** Texto padrão de recomendação associado à pergunta. */
 export type InlineLibraryRecommendation = {
@@ -27,7 +27,6 @@ export type InlineMetric = {
   answerType: "yes_no";
   interpretation: "qualitative";
 };
-
 
 /**
  * Configuração de biblioteca exibida para uma pergunta do rascunho.

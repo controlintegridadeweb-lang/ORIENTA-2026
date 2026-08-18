@@ -55,7 +55,7 @@ export function CriterionSectionDivider() {
 }
 
 /** Painel de seção com faixa lateral — mesma linguagem em todo o card. */
-export function CriterionSectionPanel({
+function CriterionSectionPanel({
   children,
   accent = "brand",
   className,
@@ -79,7 +79,7 @@ export function CriterionSectionPanel({
   );
 }
 
-export function CriterionSectionHeading({
+function CriterionSectionHeading({
   id,
   title,
   description,

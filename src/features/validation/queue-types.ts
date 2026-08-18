@@ -10,7 +10,7 @@ export type EvidenceVerdict =
   | "proof_requested"
   | "considered_insufficient";
 
-export type EvidenceKind = "file" | "link" | "text";
+type EvidenceKind = "file" | "link" | "text";
 
 export type QueueAnalysisDraft = {
   id: string;

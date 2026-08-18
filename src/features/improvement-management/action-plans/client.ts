@@ -5,7 +5,6 @@ import type {
   ActionPlansListResult,
   PaginatedHistory,
   SupervisionNoteEntry,
-  RecommendationActionPlanAuditEntry,
   ActionPlanResponsibleMember,
   ActionPlanDeadlineChangeRequest,
 } from "./types";
@@ -25,7 +24,6 @@ import {
   actionPlanItemResponseSchema,
   actionPlansListResponseSchema,
   deletePlanResponseSchema,
-  recommendationAuditPageSchema,
   responsibleMembersResponseSchema,
   savePlanResponseSchema,
   supervisionNoteResponseSchema,
@@ -112,7 +110,6 @@ export async function listRespondentActionPlans(
   return body;
 }
 
-
 export type { ActionPlanResponsibleMember } from "./types";
 
 export async function listActionPlanResponsibleMembers(): Promise<ActionPlanResponsibleMember[]> {
@@ -124,7 +121,7 @@ export async function listActionPlanResponsibleMembers(): Promise<ActionPlanResp
   return body.items;
 }
 
-export async function saveRespondentActionPlan(
+async function saveRespondentActionPlan(
   payload: RespondentActionCommand,
 ): Promise<{ planId: string; mode: "created" | "updated"; revision: number }> {
   const res = await fetch("/api/respondent/action-plans", {
@@ -464,33 +461,6 @@ export function listRespondentActionPlanProgressUpdates(
   );
 }
 
-
-export async function listRecommendationActionPlanAudit(
-  recommendationId: string,
-  page: HistoryPageInput = {},
-): Promise<PaginatedHistory<RecommendationActionPlanAuditEntry>> {
-  const res = await fetch(
-    `/api/admin/action-plans/recommendations/${encodeURIComponent(recommendationId)}/audit${historyQuery(page)}`,
-    { headers: buildHeaders() },
-  );
-  const body = await parseJson(res, recommendationAuditPageSchema);
-  if (!res.ok || !Array.isArray(body.items)) throw new Error(formatError(body));
-  return body;
-}
-
-export async function listRespondentRecommendationActionPlanAudit(
-  recommendationId: string,
-  page: HistoryPageInput = {},
-): Promise<PaginatedHistory<RecommendationActionPlanAuditEntry>> {
-  const res = await fetch(
-    `/api/respondent/action-plans/recommendations/${encodeURIComponent(recommendationId)}/audit${historyQuery(page)}`,
-    { headers: buildHeaders() },
-  );
-  const body = await parseJson(res, recommendationAuditPageSchema);
-  if (!res.ok || !Array.isArray(body.items)) throw new Error(formatError(body));
-  return body;
-}
-
 export async function listSupervisionNotes(
   recommendationId: string,
   page: SupervisionHistoryPageInput = {},
@@ -539,8 +509,6 @@ export async function createSupervisionNote(payload: {
   if (!res.ok || !body.note) throw new Error(formatError(body));
   return body.note;
 }
-
-
 
 export async function respondToSupervisionRequest(payload: {
   noteId: string;

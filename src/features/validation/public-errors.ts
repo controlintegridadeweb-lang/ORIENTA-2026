@@ -1,4 +1,4 @@
-export type ValidationFailureCode =
+type ValidationFailureCode =
   | "validation_conflict"
   | "evidence_not_found"
   | "evidence_not_in_cycle"

@@ -10,7 +10,7 @@ import {
   historyPaginationSchema,
   listSupervisionNotesQuerySchema,
   respondSupervisionRequestSchema,
-  saveActionPlanSchema,
+  respondentActionCommandSchema,
   updateActionProgressSchema,
 } from "./schemas";
 
@@ -183,10 +183,10 @@ describe("cancelActionCommandSchema", () => {
   });
 });
 
-describe("saveActionPlanSchema (union)", () => {
+describe("respondentActionCommandSchema (union)", () => {
   it("rejeita formId legado", () => {
     expect(
-      saveActionPlanSchema.safeParse({
+      respondentActionCommandSchema.safeParse({
         ...createPayload,
         formId: "22222222-2222-4222-8222-222222222222",
       }).success,

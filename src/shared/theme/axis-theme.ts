@@ -7,8 +7,6 @@ import { normalizeAxisNameKey } from "@/shared/domain/axis";
 
 export type AxisThemeKey = "governance" | "environmental" | "social";
 
-export { normalizeAxisNameKey } from "@/shared/domain/axis";
-
 export type AxisTheme = {
   key: AxisThemeKey;
   primary: string;
@@ -55,7 +53,6 @@ const KEY_BY_NORMALIZED: Record<string, AxisThemeKey> = {
   ambiental: "environmental",
   social: "social",
 };
-
 
 export function axisThemeKeyForName(axisName: string): AxisThemeKey | undefined {
   return KEY_BY_NORMALIZED[normalizeAxisNameKey(axisName)];

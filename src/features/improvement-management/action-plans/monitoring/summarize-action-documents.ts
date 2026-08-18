@@ -11,9 +11,9 @@ export const ACTION_DOCUMENT_STATUS_LABEL: Record<
   removed: "Removido",
 };
 
-export const RECENT_DOCUMENT_LIMIT = 3;
+const RECENT_DOCUMENT_LIMIT = 3;
 
-export function currentActionDocuments(
+function currentActionDocuments(
   documents: ActionPlanDocument[],
 ): ActionPlanDocument[] {
   return documents

@@ -3,7 +3,7 @@
  * Fonte de verdade: registros em evidences — nunca responses.notes.
  */
 
-export type EvidencePresenceKind = "file" | "link" | "text";
+type EvidencePresenceKind = "file" | "link" | "text";
 
 export type EvidencePresenceFields = {
   kind?: EvidencePresenceKind | string | null;
