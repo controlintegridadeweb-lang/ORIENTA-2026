@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve } from "node:path";
 
@@ -160,14 +161,27 @@ function stronglyConnectedComponents(graph) {
 assertAllowedChildren("src", allowedSrcDirectories, "Diretório de src");
 assertAllowedChildren("scripts", allowedScriptDirectories, "Categoria de scripts");
 
+function gitTracked(path) {
+  const output = execFileSync("git", ["ls-files", "--", path], {
+    cwd: ROOT,
+    encoding: "utf8",
+  }).trim();
+  return output.length > 0;
+}
+
 for (const forbidden of [
   "src/lib",
   "src/components",
   "src/presentation",
   "private-import",
-  "tsconfig.tsbuildinfo",
 ]) {
   if (existsSync(forbidden)) errors.push(`Artefato ou camada obsoleta presente: ${forbidden}`);
+}
+
+if (gitTracked("tsconfig.tsbuildinfo")) {
+  errors.push(
+    "Artefato versionado indevidamente: tsconfig.tsbuildinfo (cache incremental do tsc; deve permanecer só no .gitignore)",
+  );
 }
 
 for (const path of walk("src")) {
