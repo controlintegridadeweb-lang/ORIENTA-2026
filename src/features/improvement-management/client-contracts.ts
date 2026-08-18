@@ -7,7 +7,6 @@ import type {
   ActionPlanProgressUpdate,
   ActionPlanResponsibleMember,
   ActionPlanDeadlineChangeRequest,
-  RecommendationActionPlanAuditEntry,
   SupervisionNoteEntry,
 } from "./action-plans/types";
 import type {
@@ -91,9 +90,6 @@ const responsibleMemberSchema: ZodType<ActionPlanResponsibleMember> = z.object({
 const actionPlanAuditSchema: ZodType<ActionPlanAuditEntry> = z.object({
   id: z.string(), eventType: z.string(), createdAt: z.string(), actorId: z.string().nullable(), oldValue: z.unknown(), newValue: z.unknown(),
 });
-const recommendationActionPlanAuditSchema: ZodType<RecommendationActionPlanAuditEntry> = actionPlanAuditSchema.and(z.object({
-  actionPlanId: z.string(), actionLabel: z.string(),
-}));
 const deadlineChangeRequestSchema: ZodType<ActionPlanDeadlineChangeRequest> = z.object({
   id: z.string().uuid(),
   actionPlanId: z.string().uuid(),
@@ -182,7 +178,6 @@ const actionPlanProgressUpdateSchema: ZodType<ActionPlanProgressUpdate> = z.obje
 export const actionPlanProgressUpdatesResponseSchema = apiResponseSchema({
   items: z.array(actionPlanProgressUpdateSchema),
 });
-export const recommendationAuditPageSchema = paginatedSchema(recommendationActionPlanAuditSchema);
 export const deadlineChangeRequestsPageSchema = paginatedSchema(deadlineChangeRequestSchema);
 export const deadlineChangeRequestResponseSchema = apiResponseSchema({ deadlineChange: deadlineChangeRequestSchema });
 export const supervisionNotesPageSchema = paginatedSchema(supervisionNoteSchema);
