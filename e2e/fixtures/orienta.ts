@@ -62,14 +62,10 @@ async function completeAdminMfa(page: Page) {
     throw new Error(`Preparação MFA do administrador falhou: ${message}`);
   }
 
-  const manualKey = page.getByText(/Chave manual:/).first();
-  if (await manualKey.isVisible()) {
-    const text = await manualKey.innerText();
-    const secret = text.replace(/^.*Chave manual:\s*/i, "").trim();
-    if (!secret) {
-      throw new Error("A chave TOTP administrativa veio vazia na tela de cadastro.");
-    }
-    adminTotpSecret = secret;
+  const manualSecret = page.locator("p").filter({ hasText: "Chave manual:" }).locator("code");
+  if (await manualSecret.isVisible()) {
+    await expect(manualSecret).toHaveText(/[A-Z2-7]{16,}/i);
+    adminTotpSecret = (await manualSecret.innerText()).replace(/\s+/g, "").trim();
   }
   if (!adminTotpSecret) {
     throw new Error("O E2E não possui a chave TOTP do primeiro cadastro administrativo.");

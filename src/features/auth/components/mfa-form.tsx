@@ -151,7 +151,8 @@ export function MfaForm({ redirectTo }: { redirectTo: string }) {
                 className="mx-auto h-48 w-48 rounded-lg bg-white p-2"
               />
               <p className="break-all text-xs text-slate-600">
-                <strong>Chave manual:</strong> {setup.secret}
+                <strong id="mfa-manual-secret-label">Chave manual:</strong>{" "}
+                <code aria-labelledby="mfa-manual-secret-label">{setup.secret}</code>
               </p>
             </div>
           ) : (
