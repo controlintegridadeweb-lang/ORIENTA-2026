@@ -19,6 +19,7 @@
  */
 import { spawnSync } from "node:child_process";
 import {
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -32,6 +33,7 @@ import { loadEnv, resolveDbUrl, supabaseProjectRef } from "../shared/load-env.mj
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "../..");
 const target = resolve(root, "src/infrastructure/supabase/database.types.ts");
+const generatedSnapshot = resolve(root, "var/database.generated.types.ts");
 const checkOnly = process.argv.includes("--check");
 const supabaseCli = resolve(root, "node_modules/supabase/dist/supabase.js");
 
@@ -72,6 +74,7 @@ if (
 }
 
 if (checkOnly) {
+  persistGeneratedSnapshot(generated);
   verifyStructuralCompatibility(generated);
   console.log("Tipos versionados estão estruturalmente sincronizados com o schema real.");
   process.exit(0);
@@ -108,6 +111,17 @@ function verifyStructuralCompatibility(generatedSource) {
         // o contrato canônico do schema é o restante de Database.
         "type CurrentSchema = Omit<CurrentDatabase, \"__InternalSupabase\">;",
         "type GeneratedSchema = Omit<GeneratedDatabase, \"__InternalSupabase\">;",
+        "type CurrentPublic = CurrentSchema[\"public\"];",
+        "type GeneratedPublic = GeneratedSchema[\"public\"];",
+        "",
+        "type CurrentTablesCoverGenerated = Assert<Extends<CurrentPublic[\"Tables\"], GeneratedPublic[\"Tables\"]>>;",
+        "type GeneratedTablesCoverCurrent = Assert<Extends<GeneratedPublic[\"Tables\"], CurrentPublic[\"Tables\"]>>;",
+        "type CurrentViewsCoverGenerated = Assert<Extends<CurrentPublic[\"Views\"], GeneratedPublic[\"Views\"]>>;",
+        "type GeneratedViewsCoverCurrent = Assert<Extends<GeneratedPublic[\"Views\"], CurrentPublic[\"Views\"]>>;",
+        "type CurrentFunctionsCoverGenerated = Assert<Extends<CurrentPublic[\"Functions\"], GeneratedPublic[\"Functions\"]>>;",
+        "type GeneratedFunctionsCoverCurrent = Assert<Extends<GeneratedPublic[\"Functions\"], CurrentPublic[\"Functions\"]>>;",
+        "type CurrentEnumsCoverGenerated = Assert<Extends<CurrentPublic[\"Enums\"], GeneratedPublic[\"Enums\"]>>;",
+        "type GeneratedEnumsCoverCurrent = Assert<Extends<GeneratedPublic[\"Enums\"], CurrentPublic[\"Enums\"]>>;",
         "",
         "type CurrentDatabaseCoversGenerated = Assert<Extends<CurrentSchema, GeneratedSchema>>;",
         "type GeneratedDatabaseCoversCurrent = Assert<Extends<GeneratedSchema, CurrentSchema>>;",
@@ -161,12 +175,18 @@ function verifyStructuralCompatibility(generatedSource) {
       console.error(
         "database.types.ts está incompatível com o schema real. Execute `npm run gen:types` e versione o resultado oficial.",
       );
+      console.error(`Saída oficial do gerador: ${relative(root, generatedSnapshot)}`);
       if (output) console.error(output);
       process.exit(comparison.status ?? 1);
     }
   } finally {
     rmSync(workdir, { recursive: true, force: true });
   }
+}
+
+function persistGeneratedSnapshot(generatedSource) {
+  mkdirSync(resolve(root, "var"), { recursive: true });
+  writeFileSync(generatedSnapshot, generatedSource, "utf8");
 }
 
 function isLocalSupabaseDbUrl(url) {

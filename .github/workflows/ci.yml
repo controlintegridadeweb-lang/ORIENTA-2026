@@ -99,10 +99,18 @@ jobs:
           echo "Could not obtain ${NEED}"
           exit 1
       - name: Verify generated database types
+        id: check-generated-types
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           SUPABASE_GEN_TYPES_MODE: local
         run: npm run check:generated-types
+      - name: Upload generated database types
+        if: failure() && steps.check-generated-types.outcome == 'failure'
+        uses: actions/upload-artifact@v5
+        with:
+          name: generated-database-types
+          path: var/database.generated.types.ts
+          if-no-files-found: error
       - name: Verify RLS, RPCs and Storage policies against real Supabase PostgreSQL
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres

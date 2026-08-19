@@ -37,6 +37,7 @@ var/imports/*
 !var/imports/README.md
 
 # Relatórios gerados por validações locais do banco
+var/database.generated.types.ts
 var/greenfield-pglite-report.json
 var/form-management-rpc-pglite-report.json
 var/greenfield/*.log
