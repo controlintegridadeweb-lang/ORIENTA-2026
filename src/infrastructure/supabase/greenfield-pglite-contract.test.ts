@@ -14,11 +14,6 @@ function timestampedMigrationCount() {
   ).length;
 }
 
-const reportPath = join(process.cwd(), "var/greenfield-pglite-report.json");
-const runLive =
-  process.env.RUN_GREENFIELD === "1" ||
-  Boolean(process.env.SUPABASE_ACCESS_TOKEN);
-
 describe("baseline greenfield em PGlite", () => {
   it.skipIf(!runLive)(
     "aplica a baseline timestampada em Postgres descartável sem erros",
