@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
   public: {
     Tables: {
       action_plan_deadline_change_requests: {
@@ -67,13 +62,195 @@ export type Database = {
           status?: Database["public"]["Enums"]["action_plan_deadline_change_status"]
         }
         Relationships: [
-          { foreignKeyName: "action_plan_deadline_change_requests_action_plan_id_fkey"; columns: ["action_plan_id"]; isOneToOne: false; referencedRelation: "action_plans"; referencedColumns: ["id"] },
-          { foreignKeyName: "action_plan_deadline_change_requests_decided_by_fkey"; columns: ["decided_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
-          { foreignKeyName: "action_plan_deadline_change_requests_organization_id_fkey"; columns: ["organization_id"]; isOneToOne: false; referencedRelation: "organizations"; referencedColumns: ["id"] },
-          { foreignKeyName: "action_plan_deadline_change_requests_recommendation_id_fkey"; columns: ["recommendation_id"]; isOneToOne: false; referencedRelation: "current_recommendation_read_model"; referencedColumns: ["recommendation_id"] },
-          { foreignKeyName: "action_plan_deadline_change_requests_recommendation_id_fkey"; columns: ["recommendation_id"]; isOneToOne: false; referencedRelation: "recommendations"; referencedColumns: ["id"] },
-          { foreignKeyName: "action_plan_deadline_change_requests_requested_by_fkey"; columns: ["requested_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_action_plan_id_fkey"
+            columns: ["action_plan_id"]
+            isOneToOne: false
+            referencedRelation: "action_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "current_recommendation_read_model"
+            referencedColumns: ["recommendation_id"]
+          },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "recommendations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_plan_deadline_change_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
+      }
+      action_plan_documents: {
+        Row: {
+          action_plan_id: string
+          action_revision: number
+          created_at: string
+          deactivated_at: string | null
+          deactivated_by: string | null
+          deactivation_reason: string | null
+          external_link: string | null
+          file_validation_status: string
+          id: string
+          kind: string
+          mime_type: string | null
+          organization_id: string
+          original_filename: string | null
+          size_bytes: number | null
+          storage_path: string | null
+          title: string
+          uploaded_by: string
+          validated_at: string | null
+        }
+        Insert: {
+          action_plan_id: string
+          action_revision: number
+          created_at?: string
+          deactivated_at?: string | null
+          deactivated_by?: string | null
+          deactivation_reason?: string | null
+          external_link?: string | null
+          file_validation_status?: string
+          id?: string
+          kind: string
+          mime_type?: string | null
+          organization_id: string
+          original_filename?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          title: string
+          uploaded_by: string
+          validated_at?: string | null
+        }
+        Update: {
+          action_plan_id?: string
+          action_revision?: number
+          created_at?: string
+          deactivated_at?: string | null
+          deactivated_by?: string | null
+          deactivation_reason?: string | null
+          external_link?: string | null
+          file_validation_status?: string
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          organization_id?: string
+          original_filename?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          title?: string
+          uploaded_by?: string
+          validated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_plan_documents_action_plan_id_fkey"
+            columns: ["action_plan_id"]
+            isOneToOne: false
+            referencedRelation: "action_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_plan_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      action_plan_progress_updates: {
+        Row: {
+          action_plan_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          new_percentage: number
+          new_status: Database["public"]["Enums"]["action_plan_status"]
+          previous_percentage: number
+          previous_status: Database["public"]["Enums"]["action_plan_status"]
+        }
+        Insert: {
+          action_plan_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          new_percentage: number
+          new_status: Database["public"]["Enums"]["action_plan_status"]
+          previous_percentage: number
+          previous_status: Database["public"]["Enums"]["action_plan_status"]
+        }
+        Update: {
+          action_plan_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          new_percentage?: number
+          new_status?: Database["public"]["Enums"]["action_plan_status"]
+          previous_percentage?: number
+          previous_status?: Database["public"]["Enums"]["action_plan_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_plan_progress_updates_action_plan_id_fkey"
+            columns: ["action_plan_id"]
+            isOneToOne: false
+            referencedRelation: "action_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      action_plan_storage_cleanup_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          last_error: string | null
+          scheduled_for: string
+          storage_path: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          last_error?: string | null
+          scheduled_for?: string
+          storage_path: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          last_error?: string | null
+          scheduled_for?: string
+          storage_path?: string
+        }
+        Relationships: []
       }
       action_plan_supervision_notes: {
         Row: {
@@ -157,168 +334,6 @@ export type Database = {
           },
         ]
       }
-      action_plan_documents: {
-        Row: {
-          action_plan_id: string
-          action_revision: number
-          created_at: string
-          deactivated_at: string | null
-          deactivated_by: string | null
-          deactivation_reason: string | null
-          external_link: string | null
-          id: string
-          kind: string
-          file_validation_status: string
-          validated_at: string | null
-          mime_type: string | null
-          organization_id: string
-          original_filename: string | null
-          size_bytes: number | null
-          storage_path: string | null
-          title: string
-          uploaded_by: string
-        }
-        Insert: {
-          action_plan_id: string
-          action_revision: number
-          created_at?: string
-          deactivated_at?: string | null
-          deactivated_by?: string | null
-          deactivation_reason?: string | null
-          external_link?: string | null
-          id?: string
-          kind: string
-          file_validation_status?: string
-          validated_at?: string | null
-          mime_type?: string | null
-          organization_id: string
-          original_filename?: string | null
-          size_bytes?: number | null
-          storage_path?: string | null
-          title: string
-          uploaded_by: string
-        }
-        Update: {
-          action_plan_id?: string
-          action_revision?: number
-          created_at?: string
-          deactivated_at?: string | null
-          deactivated_by?: string | null
-          deactivation_reason?: string | null
-          external_link?: string | null
-          id?: string
-          kind?: string
-          file_validation_status?: string
-          validated_at?: string | null
-          mime_type?: string | null
-          organization_id?: string
-          original_filename?: string | null
-          size_bytes?: number | null
-          storage_path?: string | null
-          title?: string
-          uploaded_by?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "action_plan_documents_action_plan_id_fkey"
-            columns: ["action_plan_id"]
-            isOneToOne: false
-            referencedRelation: "action_plans"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_plan_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      pending_action_plan_document_uploads: {
-        Row: {
-          action_plan_id: string
-          action_revision: number
-          created_at: string
-          expires_at: string
-          id: string
-          mime_type: string | null
-          organization_id: string
-          original_filename: string
-          size_bytes: number
-          storage_path: string
-          title: string
-          uploaded_by: string
-        }
-        Insert: {
-          action_plan_id: string
-          action_revision: number
-          created_at?: string
-          expires_at: string
-          id?: string
-          mime_type?: string | null
-          organization_id: string
-          original_filename: string
-          size_bytes: number
-          storage_path: string
-          title: string
-          uploaded_by: string
-        }
-        Update: {
-          action_plan_id?: string
-          action_revision?: number
-          created_at?: string
-          expires_at?: string
-          id?: string
-          mime_type?: string | null
-          organization_id?: string
-          original_filename?: string
-          size_bytes?: number
-          storage_path?: string
-          title?: string
-          uploaded_by?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pending_action_plan_document_uploads_action_plan_id_fkey"
-            columns: ["action_plan_id"]
-            isOneToOne: false
-            referencedRelation: "action_plans"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pending_action_plan_document_uploads_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      action_plan_storage_cleanup_queue: {
-        Row: {
-          attempts: number
-          created_at: string
-          last_error: string | null
-          scheduled_for: string
-          storage_path: string
-        }
-        Insert: {
-          attempts?: number
-          created_at?: string
-          last_error?: string | null
-          scheduled_for?: string
-          storage_path: string
-        }
-        Update: {
-          attempts?: number
-          created_at?: string
-          last_error?: string | null
-          scheduled_for?: string
-          storage_path?: string
-        }
-        Relationships: []
-      }
       action_plans: {
         Row: {
           action_text: string
@@ -397,50 +412,6 @@ export type Database = {
             columns: ["recommendation_id"]
             isOneToOne: false
             referencedRelation: "recommendations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      action_plan_progress_updates: {
-        Row: {
-          action_plan_id: string
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          new_percentage: number
-          new_status: Database["public"]["Enums"]["action_plan_status"]
-          previous_percentage: number
-          previous_status: Database["public"]["Enums"]["action_plan_status"]
-        }
-        Insert: {
-          action_plan_id: string
-          created_at?: string
-          created_by: string
-          description?: string | null
-          id?: string
-          new_percentage: number
-          new_status: Database["public"]["Enums"]["action_plan_status"]
-          previous_percentage: number
-          previous_status: Database["public"]["Enums"]["action_plan_status"]
-        }
-        Update: {
-          action_plan_id?: string
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          new_percentage?: number
-          new_status?: Database["public"]["Enums"]["action_plan_status"]
-          previous_percentage?: number
-          previous_status?: Database["public"]["Enums"]["action_plan_status"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "action_plan_progress_updates_action_plan_id_fkey"
-            columns: ["action_plan_id"]
-            isOneToOne: false
-            referencedRelation: "action_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -633,6 +604,83 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_deadline_events: {
+        Row: {
+          action: string
+          actor_user_id: string
+          batch_id: string
+          created_at: string
+          cycle_id: string
+          form_id: string
+          id: string
+          justification: string
+          new_deadline_at: string | null
+          organization_id: string
+          period_label: string
+          previous_deadline_at: string | null
+          scope: string
+        }
+        Insert: {
+          action: string
+          actor_user_id: string
+          batch_id: string
+          created_at?: string
+          cycle_id: string
+          form_id: string
+          id?: string
+          justification: string
+          new_deadline_at?: string | null
+          organization_id: string
+          period_label: string
+          previous_deadline_at?: string | null
+          scope: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string
+          batch_id?: string
+          created_at?: string
+          cycle_id?: string
+          form_id?: string
+          id?: string
+          justification?: string
+          new_deadline_at?: string | null
+          organization_id?: string
+          period_label?: string
+          previous_deadline_at?: string | null
+          scope?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cycle_deadline_events_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cycle_deadline_events_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "form_answer_cycle_read_model"
+            referencedColumns: ["cycle_id"]
+          },
+          {
+            foreignKeyName: "cycle_deadline_events_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cycle_deadline_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cycle_processings: {
         Row: {
           completed_at: string | null
@@ -705,80 +753,17 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "cycle_reopen_allowed_questions_question_version_id_fkey"
+            columns: ["question_version_id"]
+            isOneToOne: false
+            referencedRelation: "question_versions"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "cycle_reopen_allowed_questions_reopen_event_id_fkey"
             columns: ["reopen_event_id"]
             isOneToOne: false
             referencedRelation: "cycle_reopen_events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      cycle_deadline_events: {
-        Row: {
-          action: string
-          actor_user_id: string
-          batch_id: string
-          created_at: string
-          cycle_id: string
-          form_id: string
-          id: string
-          justification: string
-          new_deadline_at: string | null
-          organization_id: string
-          period_label: string
-          previous_deadline_at: string | null
-          scope: string
-        }
-        Insert: {
-          action: string
-          actor_user_id: string
-          batch_id: string
-          created_at?: string
-          cycle_id: string
-          form_id: string
-          id?: string
-          justification: string
-          new_deadline_at?: string | null
-          organization_id: string
-          period_label: string
-          previous_deadline_at?: string | null
-          scope: string
-        }
-        Update: {
-          action?: string
-          actor_user_id?: string
-          batch_id?: string
-          created_at?: string
-          cycle_id?: string
-          form_id?: string
-          id?: string
-          justification?: string
-          new_deadline_at?: string | null
-          organization_id?: string
-          period_label?: string
-          previous_deadline_at?: string | null
-          scope?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "cycle_deadline_events_cycle_id_fkey"
-            columns: ["cycle_id"]
-            isOneToOne: false
-            referencedRelation: "cycles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cycle_deadline_events_form_id_fkey"
-            columns: ["form_id"]
-            isOneToOne: false
-            referencedRelation: "forms"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cycle_deadline_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1059,17 +1044,17 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "cycles_period_id_fkey"
-            columns: ["period_id"]
-            isOneToOne: false
-            referencedRelation: "form_periods"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "cycles_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cycles_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "form_periods"
             referencedColumns: ["id"]
           },
         ]
@@ -1216,11 +1201,11 @@ export type Database = {
         Row: {
           deactivated_at: string | null
           external_link: string | null
+          file_validated_at: string | null
+          file_validation_status: string
           id: string
           kind: Database["public"]["Enums"]["evidence_kind"]
           link_reason: string | null
-          file_validation_status: string
-          file_validated_at: string | null
           mime_type: string | null
           original_filename: string | null
           response_id: string
@@ -1239,11 +1224,11 @@ export type Database = {
         Insert: {
           deactivated_at?: string | null
           external_link?: string | null
+          file_validated_at?: string | null
+          file_validation_status?: string
           id?: string
           kind: Database["public"]["Enums"]["evidence_kind"]
           link_reason?: string | null
-          file_validation_status?: string
-          file_validated_at?: string | null
           mime_type?: string | null
           original_filename?: string | null
           response_id: string
@@ -1262,11 +1247,11 @@ export type Database = {
         Update: {
           deactivated_at?: string | null
           external_link?: string | null
+          file_validated_at?: string | null
+          file_validation_status?: string
           id?: string
           kind?: Database["public"]["Enums"]["evidence_kind"]
           link_reason?: string | null
-          file_validation_status?: string
-          file_validated_at?: string | null
           mime_type?: string | null
           original_filename?: string | null
           response_id?: string
@@ -1289,75 +1274,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "responses"
             referencedColumns: ["id"]
-          },
-        ]
-      }
-      fami_preliminary_processings: {
-        Row: {
-          calculated_at: string
-          calculated_by: string | null
-          calculation_kind: string
-          calculation_version: number
-          closed_at: string | null
-          cycle_id: string
-          id: string
-          methodology_version: string
-          period_end: string
-          period_start: string
-          quadrimester: number
-          reference_year: number
-          source_cycle_processing_id: string
-          source_policy_version: string
-          source_processing_version: number
-        }
-        Insert: {
-          calculated_at?: string
-          calculated_by?: string | null
-          calculation_kind?: string
-          calculation_version: number
-          closed_at?: string | null
-          cycle_id: string
-          id?: string
-          methodology_version?: string
-          period_end: string
-          period_start: string
-          quadrimester: number
-          reference_year: number
-          source_cycle_processing_id: string
-          source_policy_version: string
-          source_processing_version: number
-        }
-        Update: {
-          calculated_at?: string
-          calculated_by?: string | null
-          calculation_kind?: string
-          calculation_version?: number
-          closed_at?: string | null
-          cycle_id?: string
-          id?: string
-          methodology_version?: string
-          period_end?: string
-          period_start?: string
-          quadrimester?: number
-          reference_year?: number
-          source_cycle_processing_id?: string
-          source_policy_version?: string
-          source_processing_version?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fami_preliminary_processings_cycle_id_fkey"
-            columns: ["cycle_id"]
-            isOneToOne: false
-            referencedRelation: "cycles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fami_preliminary_processings_source_fkey"
-            columns: ["source_cycle_processing_id", "cycle_id"]
-            isOneToOne: false
-            referencedRelation: "cycle_processings"
-            referencedColumns: ["id", "cycle_id"]
           },
         ]
       }
@@ -1394,6 +1310,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fami_preliminary_action_snapshot_preliminary_processing_id_fkey"
+            columns: ["preliminary_processing_id"]
+            isOneToOne: false
+            referencedRelation: "fami_preliminary_processings"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fami_preliminary_action_snapshots_action_plan_id_fkey"
             columns: ["action_plan_id"]
             isOneToOne: false
@@ -1401,11 +1324,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fami_preliminary_action_snapshots_preliminary_processing_id_fkey"
-            columns: ["preliminary_processing_id"]
+            foreignKeyName: "fami_preliminary_action_snapshots_recommendation_id_fkey"
+            columns: ["recommendation_id"]
             isOneToOne: false
-            referencedRelation: "fami_preliminary_processings"
-            referencedColumns: ["id"]
+            referencedRelation: "current_recommendation_read_model"
+            referencedColumns: ["recommendation_id"]
           },
           {
             foreignKeyName: "fami_preliminary_action_snapshots_recommendation_id_fkey"
@@ -1473,10 +1396,24 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fami_preliminary_criterion_results_preliminary_processing_id_fkey"
+            foreignKeyName: "fami_preliminary_criterion_resul_preliminary_processing_id_fkey"
             columns: ["preliminary_processing_id"]
             isOneToOne: false
             referencedRelation: "fami_preliminary_processings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_criterion_results_approved_exception_id_fkey"
+            columns: ["approved_exception_id"]
+            isOneToOne: false
+            referencedRelation: "recommendation_exceptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_criterion_results_axis_id_fkey"
+            columns: ["axis_id"]
+            isOneToOne: false
+            referencedRelation: "axes"
             referencedColumns: ["id"]
           },
           {
@@ -1485,6 +1422,103 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "question_versions"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_criterion_results_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "current_recommendation_read_model"
+            referencedColumns: ["recommendation_id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_criterion_results_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "recommendations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_criterion_results_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fami_preliminary_processings: {
+        Row: {
+          calculated_at: string
+          calculated_by: string | null
+          calculation_kind: string
+          calculation_version: number
+          closed_at: string | null
+          cycle_id: string
+          id: string
+          methodology_version: string
+          period_end: string
+          period_start: string
+          quadrimester: number
+          reference_year: number
+          source_cycle_processing_id: string
+          source_policy_version: string
+          source_processing_version: number
+        }
+        Insert: {
+          calculated_at?: string
+          calculated_by?: string | null
+          calculation_kind?: string
+          calculation_version: number
+          closed_at?: string | null
+          cycle_id: string
+          id?: string
+          methodology_version?: string
+          period_end: string
+          period_start: string
+          quadrimester: number
+          reference_year: number
+          source_cycle_processing_id: string
+          source_policy_version: string
+          source_processing_version: number
+        }
+        Update: {
+          calculated_at?: string
+          calculated_by?: string | null
+          calculation_kind?: string
+          calculation_version?: number
+          closed_at?: string | null
+          cycle_id?: string
+          id?: string
+          methodology_version?: string
+          period_end?: string
+          period_start?: string
+          quadrimester?: number
+          reference_year?: number
+          source_cycle_processing_id?: string
+          source_policy_version?: string
+          source_processing_version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fami_preliminary_processings_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_processings_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "form_answer_cycle_read_model"
+            referencedColumns: ["cycle_id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_processings_source_fkey"
+            columns: ["source_cycle_processing_id", "cycle_id"]
+            isOneToOne: false
+            referencedRelation: "cycle_processings"
+            referencedColumns: ["id", "cycle_id"]
           },
         ]
       }
@@ -1532,6 +1566,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "cycles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fami_preliminary_results_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "form_answer_cycle_read_model"
+            referencedColumns: ["cycle_id"]
           },
           {
             foreignKeyName: "fami_preliminary_results_preliminary_processing_id_fkey"
@@ -1600,50 +1641,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "cycle_processings"
             referencedColumns: ["id", "cycle_id"]
-          },
-        ]
-      }
-      form_periods: {
-        Row: {
-          created_at: string
-          form_version_id: string
-          id: string
-          label: string
-          period_code: string
-          response_deadline_at: string | null
-          starts_at: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          form_version_id: string
-          id?: string
-          label: string
-          period_code: string
-          response_deadline_at?: string | null
-          starts_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          form_version_id?: string
-          id?: string
-          label?: string
-          period_code?: string
-          response_deadline_at?: string | null
-          starts_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "form_periods_form_version_id_fkey"
-            columns: ["form_version_id"]
-            isOneToOne: false
-            referencedRelation: "form_versions"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -1741,6 +1738,50 @@ export type Database = {
             columns: ["form_id"]
             isOneToOne: true
             referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_periods: {
+        Row: {
+          created_at: string
+          form_version_id: string
+          id: string
+          label: string
+          period_code: string
+          response_deadline_at: string | null
+          starts_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          form_version_id: string
+          id?: string
+          label: string
+          period_code: string
+          response_deadline_at?: string | null
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          form_version_id?: string
+          id?: string
+          label?: string
+          period_code?: string
+          response_deadline_at?: string | null
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_periods_form_version_id_fkey"
+            columns: ["form_version_id"]
+            isOneToOne: false
+            referencedRelation: "form_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -2138,13 +2179,73 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_action_plan_document_uploads: {
+        Row: {
+          action_plan_id: string
+          action_revision: number
+          created_at: string
+          expires_at: string
+          id: string
+          mime_type: string | null
+          organization_id: string
+          original_filename: string
+          size_bytes: number
+          storage_path: string
+          title: string
+          uploaded_by: string
+        }
+        Insert: {
+          action_plan_id: string
+          action_revision: number
+          created_at?: string
+          expires_at: string
+          id?: string
+          mime_type?: string | null
+          organization_id: string
+          original_filename: string
+          size_bytes: number
+          storage_path: string
+          title: string
+          uploaded_by: string
+        }
+        Update: {
+          action_plan_id?: string
+          action_revision?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          mime_type?: string | null
+          organization_id?: string
+          original_filename?: string
+          size_bytes?: number
+          storage_path?: string
+          title?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_action_plan_document_uploads_action_plan_id_fkey"
+            columns: ["action_plan_id"]
+            isOneToOne: false
+            referencedRelation: "action_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_action_plan_document_uploads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pending_evidence_uploads: {
         Row: {
           created_at: string
           cycle_id: string
           expires_at: string
-          id: string
           file_validation_status: string
+          id: string
           mime_type: string | null
           organization_id: string
           original_filename: string
@@ -2158,8 +2259,8 @@ export type Database = {
           created_at?: string
           cycle_id: string
           expires_at?: string
-          id: string
           file_validation_status?: string
+          id: string
           mime_type?: string | null
           organization_id: string
           original_filename: string
@@ -2173,8 +2274,8 @@ export type Database = {
           created_at?: string
           cycle_id?: string
           expires_at?: string
-          id?: string
           file_validation_status?: string
+          id?: string
           mime_type?: string | null
           organization_id?: string
           original_filename?: string
@@ -3269,6 +3370,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "validation_analysis_drafts_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "form_answer_cycle_read_model"
+            referencedColumns: ["cycle_id"]
+          },
+          {
+            foreignKeyName: "validation_analysis_drafts_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_operational_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "validation_analysis_drafts_evidence_id_fkey"
             columns: ["evidence_id"]
             isOneToOne: false
@@ -3619,15 +3734,6 @@ export type Database = {
       }
     }
     Functions: {
-      decide_action_plan_deadline_change: {
-        Args: {
-          p_actor_user_id: string
-          p_decision: Database["public"]["Enums"]["action_plan_deadline_change_status"]
-          p_decision_reason: string
-          p_request_id: string
-        }
-        Returns: Database["public"]["Tables"]["action_plan_deadline_change_requests"]["Row"]
-      }
       admin_change_cycle_response_deadlines: {
         Args: {
           p_action: string
@@ -3635,7 +3741,7 @@ export type Database = {
           p_batch_id?: string
           p_cycle_ids: string[]
           p_justification: string
-          p_new_deadline_at: string | null
+          p_new_deadline_at: string
           p_scope: string
         }
         Returns: Json
@@ -3647,7 +3753,7 @@ export type Database = {
           p_cycle_ids: string[]
           p_justification: string
           p_new_deadline_at: string
-          p_question_version_ids?: string[] | null
+          p_question_version_ids?: string[]
           p_scope: string
         }
         Returns: Json
@@ -3769,70 +3875,6 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      initialize_action_plan_document_upload: {
-        Args: {
-          p_actor_user_id: string
-          p_expected_revision: number
-          p_expires_at: string
-          p_mime_type: string
-          p_organization_id: string
-          p_original_filename: string
-          p_pending_upload_id: string
-          p_plan_id: string
-          p_size_bytes: number
-          p_storage_path: string
-          p_title: string
-        }
-        Returns: undefined
-      }
-      commit_action_plan_document_upload: {
-        Args: {
-          p_actor_user_id: string
-          p_expected_revision: number
-          p_organization_id: string
-          p_pending_upload_id: string
-          p_plan_id: string
-          p_verified_mime_type: string
-        }
-        Returns: {
-          action_plan_id: string
-          action_revision: number
-          created_at: string
-          external_link: string | null
-          id: string
-          kind: string
-          file_validation_status: string
-          mime_type: string | null
-          original_filename: string | null
-          size_bytes: number | null
-          storage_path: string | null
-          title: string
-        }[]
-      }
-      discard_pending_action_plan_document_upload: {
-        Args: {
-          p_actor_user_id: string
-          p_organization_id: string
-          p_pending_upload_id: string
-          p_plan_id: string
-        }
-        Returns: {
-          storage_path: string | null
-        }[]
-      }
-      deactivate_action_plan_document: {
-        Args: {
-          p_actor_user_id: string
-          p_document_id: string
-          p_expected_revision: number
-          p_organization_id: string
-          p_plan_id: string
-          p_reason: string
-        }
-        Returns: {
-          storage_path: string | null
-        }[]
-      }
       claim_notification_outbox: {
         Args: { p_limit?: number; p_lock_timeout?: string; p_worker_id: string }
         Returns: {
@@ -3861,6 +3903,31 @@ export type Database = {
         }
       }
       cleanup_operational_data: { Args: never; Returns: Json }
+      close_due_fami_preliminary_quadrimesters: { Args: never; Returns: Json }
+      commit_action_plan_document_upload: {
+        Args: {
+          p_actor_user_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_pending_upload_id: string
+          p_plan_id: string
+          p_verified_mime_type: string
+        }
+        Returns: {
+          action_plan_id: string
+          action_revision: number
+          created_at: string
+          external_link: string
+          file_validation_status: string
+          id: string
+          kind: string
+          mime_type: string
+          original_filename: string
+          size_bytes: number
+          storage_path: string
+          title: string
+        }[]
+      }
       commit_cycle_transition: {
         Args: {
           p_actor_user_id: string
@@ -3918,26 +3985,6 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      ensure_form_period: {
-        Args: {
-          p_form_version_id: string
-          p_period_code: string
-          p_label?: string
-          p_starts_at?: string
-          p_response_deadline_at?: string
-        }
-        Returns: {
-          created_at: string
-          form_version_id: string
-          id: string
-          label: string
-          period_code: string
-          response_deadline_at: string | null
-          starts_at: string | null
-          status: string
-          updated_at: string
-        }
-      }
       create_cycle: {
         Args: {
           p_actor_user_id: string
@@ -3952,10 +3999,12 @@ export type Database = {
           closed_at: string | null
           created_at: string
           cycle_close_at: string | null
+          deadline_change_count: number
           deadline_policy: string
           form_version_id: string
           id: string
           organization_id: string
+          original_response_deadline_at: string | null
           period_id: string
           period_label: string
           reference_end_year: number | null
@@ -3963,6 +4012,8 @@ export type Database = {
           reminder_offsets_days: number[]
           reopen_count: number
           reopened_at: string | null
+          response_collection_pause_reason: string | null
+          response_collection_paused_at: string | null
           response_deadline_at: string | null
           schedule_revision: number
           starts_at: string | null
@@ -4078,6 +4129,17 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_report_emission: {
+        Args: {
+          p_cycle_id: string
+          p_cycle_processing_id: string
+          p_file_path: string
+          p_generated_at: string
+          p_generated_by: string
+          p_reissue_reason?: string
+        }
+        Returns: Json
+      }
       create_respondent_profile: {
         Args: {
           p_actor_user_id: string
@@ -4107,6 +4169,19 @@ export type Database = {
         Args: { p_cycle_id: string }
         Returns: string
       }
+      deactivate_action_plan_document: {
+        Args: {
+          p_actor_user_id: string
+          p_document_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_plan_id: string
+          p_reason: string
+        }
+        Returns: {
+          storage_path: string
+        }[]
+      }
       deactivate_misplaced_legacy_evidence_link: {
         Args: {
           p_actor_user_id: string
@@ -4115,6 +4190,37 @@ export type Database = {
           p_reason?: string
         }
         Returns: Json
+      }
+      decide_action_plan_deadline_change: {
+        Args: {
+          p_actor_user_id: string
+          p_decision: Database["public"]["Enums"]["action_plan_deadline_change_status"]
+          p_decision_reason: string
+          p_request_id: string
+        }
+        Returns: {
+          action_plan_id: string
+          action_revision: number
+          applied_action_revision: number | null
+          decided_at: string | null
+          decided_by: string | null
+          decision_reason: string | null
+          id: string
+          organization_id: string
+          previous_due_date: string
+          reason: string
+          recommendation_id: string
+          requested_at: string
+          requested_by: string
+          requested_due_date: string
+          status: Database["public"]["Enums"]["action_plan_deadline_change_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "action_plan_deadline_change_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       decide_action_plan_supervision_request: {
         Args: {
@@ -4179,6 +4285,17 @@ export type Database = {
         Args: { p_actor_user_id: string; p_form_id: string }
         Returns: undefined
       }
+      discard_pending_action_plan_document_upload: {
+        Args: {
+          p_actor_user_id: string
+          p_organization_id: string
+          p_pending_upload_id: string
+          p_plan_id: string
+        }
+        Returns: {
+          storage_path: string
+        }[]
+      }
       discard_pending_evidence_upload: {
         Args: {
           p_actor_user_id: string
@@ -4202,6 +4319,32 @@ export type Database = {
         Returns: Json
       }
       enqueue_operational_notifications: { Args: never; Returns: Json }
+      ensure_form_period: {
+        Args: {
+          p_form_version_id: string
+          p_label?: string
+          p_period_code: string
+          p_response_deadline_at?: string
+          p_starts_at?: string
+        }
+        Returns: {
+          created_at: string
+          form_version_id: string
+          id: string
+          label: string
+          period_code: string
+          response_deadline_at: string | null
+          starts_at: string | null
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "form_periods"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       evidence_ui_status: {
         Args: {
           p_cycle_state: Database["public"]["Enums"]["cycle_state"]
@@ -4218,26 +4361,16 @@ export type Database = {
         }
         Returns: Json
       }
+      fami_preliminary_checkpoint_payload: {
+        Args: { p_idempotent?: boolean; p_processing_id: string }
+        Returns: Json
+      }
       finalize_report_emission: {
         Args: {
           p_content_sha256: string
           p_file_sha256: string
           p_file_size_bytes: number
           p_report_id: string
-        }
-        Returns: Json
-      }
-      close_due_fami_preliminary_quadrimesters: { Args: never; Returns: Json }
-      fami_preliminary_checkpoint_payload: {
-        Args: { p_idempotent?: boolean; p_processing_id: string }
-        Returns: Json
-      }
-      materialize_fami_preliminary: {
-        Args: {
-          p_actor_user_id: string | null
-          p_cycle_id: string
-          p_quadrimester: number
-          p_reference_year: number
         }
         Returns: Json
       }
@@ -4356,25 +4489,25 @@ export type Database = {
         Args: { p_cycle_id: string }
         Returns: Json
       }
-      validation_reopen_impact: {
-        Args: { p_cycle_id: string }
-        Returns: {
-          action_plan_count: number
-          exception_count: number
-          supervision_note_count: number
-        }[]
-      }
       get_validation_queue_summary: {
         Args: { p_cycle_id: string }
         Returns: Json
       }
-      list_validation_finalization_readiness: {
-        Args: { p_cycle_ids: string[] }
-        Returns: {
-          blockers: Json
-          cycle_id: string
-          ready: boolean
-        }[]
+      initialize_action_plan_document_upload: {
+        Args: {
+          p_actor_user_id: string
+          p_expected_revision: number
+          p_expires_at: string
+          p_mime_type: string
+          p_organization_id: string
+          p_original_filename: string
+          p_pending_upload_id: string
+          p_plan_id: string
+          p_size_bytes: number
+          p_storage_path: string
+          p_title: string
+        }
+        Returns: undefined
       }
       list_action_plan_recommendations_page: {
         Args: {
@@ -4404,6 +4537,7 @@ export type Database = {
           organization_name: string
           period_label: string
           question_id: string
+          question_order: number
           question_prompt: string
           recommendation_created_at: string
           recommendation_id: string
@@ -4412,6 +4546,7 @@ export type Database = {
           recommendation_type: string
           section_id: string
           section_name: string
+          section_order: number
           total_count: number
         }[]
       }
@@ -4492,30 +4627,30 @@ export type Database = {
           cycle_id: string
           cycle_state: Database["public"]["Enums"]["cycle_state"]
           evidence_parameter: Json
-          external_link: string | null
+          external_link: string
           form_id: string
           form_name: string
           form_version: number
           id: string
           kind: Database["public"]["Enums"]["evidence_kind"]
-          link_reason: string | null
+          link_reason: string
           organization_id: string
           organization_name: string
-          original_filename: string | null
+          original_filename: string
           period_label: string
           question_id: string
           question_prompt: string
           response_id: string
           section_name: string
-          storage_path: string | null
+          storage_path: string
           submitted_at: string
           submitted_by: string
-          text_body: string | null
-          title: string | null
+          text_body: string
+          title: string
           total_count: number
-          validated_at: string | null
-          validated_by: string | null
-          validation_justification: string | null
+          validated_at: string
+          validated_by: string
+          validation_justification: string
           validation_status: Database["public"]["Enums"]["evidence_validation_status"]
         }[]
       }
@@ -4689,11 +4824,19 @@ export type Database = {
           period_label: string
         }[]
       }
+      list_validation_finalization_readiness: {
+        Args: { p_cycle_ids: string[] }
+        Returns: {
+          blockers: Json
+          cycle_id: string
+          ready: boolean
+        }[]
+      }
       list_validation_form_page: {
         Args: {
-          p_cycle_id: string
           p_answer?: string
           p_axis_id?: string
+          p_cycle_id: string
           p_decision?: string
           p_limit?: number
           p_mode?: string
@@ -4746,12 +4889,30 @@ export type Database = {
         }
         Returns: Json
       }
+      mark_validation_analysis_draft_applied: {
+        Args: {
+          p_cycle_id: string
+          p_evidence_id?: string
+          p_response_id?: string
+          p_target_kind: string
+        }
+        Returns: undefined
+      }
       match_evidence_adjustment_replacements: {
         Args: { p_response_id: string }
         Returns: {
           replacement_evidence_id: string
           requested_evidence_id: string
         }[]
+      }
+      materialize_fami_preliminary: {
+        Args: {
+          p_actor_user_id: string
+          p_cycle_id: string
+          p_quadrimester: number
+          p_reference_year: number
+        }
+        Returns: Json
       }
       notify_administrators: {
         Args: {
@@ -4761,6 +4922,16 @@ export type Database = {
           p_message: string
           p_payload?: Json
           p_title: string
+        }
+        Returns: number
+      }
+      notify_cycle_deadline_change: {
+        Args: {
+          p_action: string
+          p_batch_id: string
+          p_cycle_id: string
+          p_justification: string
+          p_new_deadline_at: string
         }
         Returns: number
       }
@@ -4795,10 +4966,10 @@ export type Database = {
       prepare_cycle_schedule_registration: {
         Args: {
           p_actor_user_id: string
-          p_cycle_close_at: string | null
+          p_cycle_close_at: string
           p_cycle_ids: string[]
           p_reminder_offsets_days: number[]
-          p_validation_deadline_at: string | null
+          p_validation_deadline_at: string
         }
         Returns: {
           cycle_id: string
@@ -4875,7 +5046,7 @@ export type Database = {
         Args: {
           p_actor_user_id: string
           p_cycle_id: string
-          p_question_version_ids?: string[] | null
+          p_question_version_ids?: string[]
           p_reason: string
           p_response_deadline_at: string
         }
@@ -4901,6 +5072,40 @@ export type Database = {
           p_waivers: Json
         }
         Returns: undefined
+      }
+      request_action_plan_deadline_change: {
+        Args: {
+          p_actor_user_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_plan_id: string
+          p_reason: string
+          p_recommendation_id: string
+          p_requested_due_date: string
+        }
+        Returns: {
+          action_plan_id: string
+          action_revision: number
+          applied_action_revision: number | null
+          decided_at: string | null
+          decided_by: string | null
+          decision_reason: string | null
+          id: string
+          organization_id: string
+          previous_due_date: string
+          reason: string
+          recommendation_id: string
+          requested_at: string
+          requested_by: string
+          requested_due_date: string
+          status: Database["public"]["Enums"]["action_plan_deadline_change_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "action_plan_deadline_change_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       reserve_report_emission: {
         Args: {
@@ -4969,6 +5174,29 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_respondent_action_plan: {
+        Args: {
+          p_action_text: string
+          p_actor_user_id: string
+          p_cancelled?: boolean
+          p_due_date: string
+          p_execution_notes?: string
+          p_expected_revision?: number
+          p_organization_id: string
+          p_plan_id: string
+          p_progress_percentage: number
+          p_progress_update_description?: string
+          p_recommendation_id: string
+          p_responsible_sector: string
+          p_responsible_user_id: string
+          p_start_date: string
+        }
+        Returns: {
+          mode: string
+          plan_id: string
+          revision: number
+        }[]
+      }
       save_validation_analysis_draft: {
         Args: {
           p_action?: string
@@ -4983,50 +5211,6 @@ export type Database = {
         }
         Returns: Json
       }
-      mark_validation_analysis_draft_applied: {
-        Args: {
-          p_cycle_id: string
-          p_evidence_id?: string
-          p_response_id?: string
-          p_target_kind: string
-        }
-        Returns: undefined
-      }
-      request_action_plan_deadline_change: {
-        Args: {
-          p_actor_user_id: string
-          p_expected_revision: number
-          p_organization_id: string
-          p_plan_id: string
-          p_reason: string
-          p_recommendation_id: string
-          p_requested_due_date: string
-        }
-        Returns: Database["public"]["Tables"]["action_plan_deadline_change_requests"]["Row"]
-      }
-      save_respondent_action_plan: {
-        Args: {
-          p_action_text: string
-          p_actor_user_id: string
-          p_cancelled?: boolean
-          p_due_date: string
-          p_execution_notes?: string
-          p_expected_revision?: number
-          p_organization_id: string
-          p_plan_id: string | null
-          p_progress_percentage: number
-          p_progress_update_description?: string | null
-          p_recommendation_id: string
-          p_responsible_sector: string
-          p_responsible_user_id: string
-          p_start_date: string
-        }
-        Returns: {
-          mode: string
-          plan_id: string
-          revision: number
-        }[]
-      }
       set_audit_actor: { Args: { p_actor: string }; Returns: undefined }
       set_cycle_reference_period: {
         Args: {
@@ -5040,16 +5224,21 @@ export type Database = {
           closed_at: string | null
           created_at: string
           cycle_close_at: string | null
+          deadline_change_count: number
           deadline_policy: string
           form_version_id: string
           id: string
           organization_id: string
+          original_response_deadline_at: string | null
+          period_id: string
           period_label: string
           reference_end_year: number | null
           reference_start_year: number | null
           reminder_offsets_days: number[]
           reopen_count: number
           reopened_at: string | null
+          response_collection_pause_reason: string | null
+          response_collection_paused_at: string | null
           response_deadline_at: string | null
           schedule_revision: number
           starts_at: string | null
@@ -5067,6 +5256,15 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      supersede_absent_proof_with_evidence: {
+        Args: {
+          p_actor_user_id: string
+          p_cycle_id: string
+          p_evidence: Json
+          p_response_id: string
+        }
+        Returns: Json
       }
       sync_form_assignments: {
         Args: {
@@ -5090,16 +5288,21 @@ export type Database = {
           closed_at: string | null
           created_at: string
           cycle_close_at: string | null
+          deadline_change_count: number
           deadline_policy: string
           form_version_id: string
           id: string
           organization_id: string
+          original_response_deadline_at: string | null
+          period_id: string
           period_label: string
           reference_end_year: number | null
           reference_start_year: number | null
           reminder_offsets_days: number[]
           reopen_count: number
           reopened_at: string | null
+          response_collection_pause_reason: string | null
+          response_collection_paused_at: string | null
           response_deadline_at: string | null
           schedule_revision: number
           starts_at: string | null
@@ -5227,39 +5430,17 @@ export type Database = {
         }
         Returns: Json
       }
-      create_report_emission: {
-        Args: {
-          p_cycle_id: string
-          p_cycle_processing_id: string
-          p_file_path: string
-          p_generated_at: string
-          p_generated_by: string
-          p_reissue_reason?: string
-        }
-        Returns: Json
-      }
-      notify_cycle_deadline_change: {
-        Args: {
-          p_action: string
-          p_batch_id: string
-          p_cycle_id: string
-          p_justification: string
-          p_new_deadline_at: string
-        }
-        Returns: number
-      }
-      supersede_absent_proof_with_evidence: {
-        Args: {
-          p_actor_user_id: string
-          p_cycle_id: string
-          p_evidence: Json
-          p_response_id: string
-        }
-        Returns: Json
-      }
       validation_form_axis_rank: {
         Args: { p_axis_name: string }
         Returns: number
+      }
+      validation_reopen_impact: {
+        Args: { p_cycle_id: string }
+        Returns: {
+          action_plan_count: number
+          exception_count: number
+          supervision_note_count: number
+        }[]
       }
     }
     Enums: {
