@@ -53,6 +53,15 @@ begin
         raise exception 'service_role_audit_relation_must_be_append_only: %.%',
           v_relation.nspname, v_relation.relname;
       end if;
+    elsif v_relation.relname = 'reports' then
+      -- Emissões oficiais só entram por RPC. A Data API permanece leitura.
+      if has_table_privilege('service_role', v_relation.oid, 'INSERT')
+         or has_table_privilege('service_role', v_relation.oid, 'UPDATE')
+         or has_table_privilege('service_role', v_relation.oid, 'DELETE')
+         or has_table_privilege('service_role', v_relation.oid, 'TRUNCATE') then
+        raise exception 'service_role_reports_must_mutate_only_via_rpc: %.%',
+          v_relation.nspname, v_relation.relname;
+      end if;
     elsif not has_table_privilege('service_role', v_relation.oid, 'INSERT')
        or not has_table_privilege('service_role', v_relation.oid, 'UPDATE')
        or not has_table_privilege('service_role', v_relation.oid, 'DELETE') then

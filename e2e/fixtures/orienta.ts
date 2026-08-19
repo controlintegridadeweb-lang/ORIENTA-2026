@@ -54,17 +54,27 @@ async function completeAdminMfa(page: Page) {
   await expect(page).toHaveURL(/\/auth\/mfa/);
   await expect(page.getByRole("heading", { name: "Autenticação em duas etapas" })).toBeVisible();
 
-  const manualKey = page.getByText(/Chave manual:/).first();
-  if (await manualKey.isVisible().catch(() => false)) {
-    const text = await manualKey.innerText();
-    const secret = text.replace(/^Chave manual:\s*/i, "").trim();
-    if (secret) adminTotpSecret = secret;
-  }
-  if (!adminTotpSecret) {
-    throw new Error("O E2E não encontrou a chave TOTP do administrador.");
+  const codeField = page.getByLabel("Código de seis dígitos");
+  const retryButton = page.getByRole("button", { name: "Tentar novamente" });
+  await expect(codeField.or(retryButton)).toBeVisible({ timeout: 30_000 });
+  if (!(await codeField.isVisible())) {
+    const message = await page.getByRole("alert").innerText().catch(() => "preparação MFA falhou");
+    throw new Error(`Preparação MFA do administrador falhou: ${message}`);
   }
 
-  const codeField = page.getByLabel("Código de seis dígitos");
+  const manualKey = page.getByText(/Chave manual:/).first();
+  if (await manualKey.isVisible()) {
+    const text = await manualKey.innerText();
+    const secret = text.replace(/^.*Chave manual:\s*/i, "").trim();
+    if (!secret) {
+      throw new Error("A chave TOTP administrativa veio vazia na tela de cadastro.");
+    }
+    adminTotpSecret = secret;
+  }
+  if (!adminTotpSecret) {
+    throw new Error("O E2E não possui a chave TOTP do primeiro cadastro administrativo.");
+  }
+
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const remainingInWindow = 30_000 - (Date.now() % 30_000);
     if (remainingInWindow < 3_000) {
