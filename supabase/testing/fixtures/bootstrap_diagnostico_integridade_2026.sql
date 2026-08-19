@@ -511,3 +511,7 @@ on conflict (question_id) do nothing;
   );
 end;
 $bootstrap$;
+
+revoke all on function public.bootstrap_diagnostico_integridade_2026(uuid) from public, anon, authenticated;
+grant execute on function public.bootstrap_diagnostico_integridade_2026(uuid) to service_role;
+notify pgrst, 'reload schema';

@@ -17,7 +17,7 @@
  * Pré-requisito: binário `psql`.
  */
 import { spawnSync } from "node:child_process";
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -102,6 +102,16 @@ $$;
 const seeds = readdirSync(verifyDir).filter((f) => f.startsWith("_") && f.endsWith(".sql")).sort();
 for (const s of seeds) {
   run(`seed ${s}`, ["-f", join(verifyDir, s)]);
+}
+
+// 2b) Fixtures exclusivos de teste/E2E. A baseline de produção proíbe essas
+// RPCs; os verifies e o prepare local as aplicam depois do schema canônico.
+const fixturesDir = join(root, "supabase", "testing", "fixtures");
+if (existsSync(fixturesDir)) {
+  const fixtures = readdirSync(fixturesDir).filter((f) => f.endsWith(".sql")).sort();
+  for (const fixture of fixtures) {
+    run(`fixture ${fixture}`, ["-f", join(fixturesDir, fixture)]);
+  }
 }
 
 // 3) Verificações.

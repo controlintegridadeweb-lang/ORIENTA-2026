@@ -5,9 +5,13 @@
  * Não é usado em produção. Requer uma stack Supabase local recém-resetada e
  * variáveis NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.
  */
+import { spawnSync } from "node:child_process";
+import { readdirSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { createServiceRoleSupabaseClient } from "../shared/create-service-role-supabase-client.mjs";
-import { loadEnv } from "../shared/load-env.mjs";
+import { loadEnv, resolveDbUrl } from "../shared/load-env.mjs";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "admin.e2e@orienta.local";
 const respondentEmail = process.env.E2E_RESPONDENT_EMAIL ?? "respondente.e2e@orienta.local";
@@ -19,7 +23,65 @@ const outsiderOrganizationName =
   process.env.E2E_OUTSIDER_ORGANIZATION_NAME ?? "Órgão Externo E2E";
 const outsiderOrganizationAcronym = process.env.E2E_OUTSIDER_ORGANIZATION_ACRONYM ?? "E2X";
 
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const supabase = createServiceRoleSupabaseClient();
+
+function formatThrown(error) {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object") {
+    const parts = [error.message, error.details, error.hint, error.code].filter(Boolean);
+    if (parts.length > 0) return parts.join(" | ");
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return String(error);
+    }
+  }
+  return String(error);
+}
+
+function applyTestingFixtures() {
+  const databaseUrl = resolveDbUrl();
+  if (!databaseUrl) {
+    throw new Error(
+      "DATABASE_URL/DB_URL/SUPABASE_DB_URL é obrigatório para aplicar os fixtures de teste do E2E.",
+    );
+  }
+  const fixturesDir = join(root, "supabase", "testing", "fixtures");
+  const files = readdirSync(fixturesDir)
+    .filter((name) => name.endsWith(".sql"))
+    .sort();
+  if (files.length === 0) {
+    throw new Error(`Nenhum fixture SQL encontrado em ${fixturesDir}.`);
+  }
+  for (const file of files) {
+    const result = spawnSync(
+      "psql",
+      [databaseUrl, "-v", "ON_ERROR_STOP=1", "-f", join(fixturesDir, file)],
+      { encoding: "utf8" },
+    );
+    if (result.status !== 0) {
+      throw new Error(
+        `Falha ao aplicar fixture ${file}: ${(result.stderr || result.stdout || "").trim()}`,
+      );
+    }
+  }
+}
+
+function isMissingRpcError(error) {
+  const text = `${error?.message ?? ""} ${error?.code ?? ""} ${error?.details ?? ""}`;
+  return /PGRST202|Could not find the function/i.test(text);
+}
+
+async function rpcOrThrow(name, args) {
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
+    const { data, error } = await supabase.rpc(name, args);
+    if (!error) return data;
+    if (!isMissingRpcError(error) || attempt === 8) throw error;
+    await new Promise((resolveWait) => setTimeout(resolveWait, 250 * attempt));
+  }
+  throw new Error(`RPC ${name} não ficou visível no PostgREST.`);
+}
 
 async function findUserByEmail(email) {
   const needle = email.toLowerCase();
@@ -98,6 +160,8 @@ async function ensureOrganization(name, acronym) {
 }
 
 async function main() {
+  applyTestingFixtures();
+
   const admin = await ensureUser({ email: adminEmail, fullName: "Administração E2E" });
   const respondent = await ensureUser({ email: respondentEmail, fullName: "Respondente E2E" });
   const outsider = await ensureUser({ email: outsiderEmail, fullName: "Respondente Externo E2E" });
@@ -128,10 +192,10 @@ async function main() {
   });
 
   // O catálogo oficial fornece eixos e seções para o wizard de criação de formulário.
-  const { error: bootstrapError } = await supabase.rpc("bootstrap_diagnostico_integridade_2026", {
+  // A RPC existe só no fixture de teste, aplicado acima — nunca na baseline de produção.
+  await rpcOrThrow("bootstrap_diagnostico_integridade_2026", {
     p_actor_user_id: admin.id,
   });
-  if (bootstrapError) throw bootstrapError;
 
   // Garante que o provider de e-mail aceita password grant com a anon key
   // (falha cedo se [auth.email].enable_signup desligar o provider no CLI).
@@ -173,6 +237,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
+  console.error(formatThrown(error));
   process.exit(1);
 });

@@ -69,7 +69,7 @@ jobs:
       - name: Audit canonical migrations
         run: npm run db:audit:migrations
       - name: Start Supabase local stack
-        run: bash scripts/ci/start-supabase-local.sh
+        run: bash scripts/database/start-supabase-local.sh
       - name: Reset local schema from migrations
         run: supabase db reset --local
       - name: Ensure postgres-meta image for type generation
@@ -146,7 +146,7 @@ jobs:
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
       - name: Start isolated Supabase stack
-        run: bash scripts/ci/start-supabase-local.sh
+        run: bash scripts/database/start-supabase-local.sh
       - name: Reset schema and prepare deterministic E2E accounts
         shell: bash
         run: |
@@ -155,6 +155,7 @@ jobs:
           export NEXT_PUBLIC_SUPABASE_URL="$API_URL"
           export NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANON_KEY"
           export SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY"
+          export DATABASE_URL="$DB_URL"
           export NEXT_PUBLIC_APP_URL="http://127.0.0.1:3002"
           # Persistido para o webServer do Playwright (next build/start) ler as
           # chaves do Supabase local sem depender só da herança de process.env.
@@ -162,6 +163,7 @@ jobs:
             "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}" \
             "NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
             "SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}" \
+            "DATABASE_URL=${DATABASE_URL}" \
             "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" \
             > .env.local
           npm run e2e:prepare

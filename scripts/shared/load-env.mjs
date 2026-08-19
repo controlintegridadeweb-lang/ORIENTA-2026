@@ -44,7 +44,8 @@ export function resolveDbUrl() {
   const direct =
     process.env.SUPABASE_DB_URL ||
     process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL;
+    process.env.POSTGRES_URL ||
+    process.env.DB_URL;
   if (direct) return direct;
 
   const password = process.env.SUPABASE_DB_PASSWORD;
