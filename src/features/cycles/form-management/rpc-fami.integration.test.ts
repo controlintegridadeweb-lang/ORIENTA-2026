@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -11,6 +11,12 @@ const scriptPath = join(
   process.cwd(),
   "scripts/database/form-management-rpc-pglite.mjs",
 );
+
+function timestampedMigrationCount() {
+  return readdirSync(join(process.cwd(), "supabase", "migrations")).filter((name) =>
+    /^\d{14}_.+\.sql$/.test(name),
+  ).length;
+}
 
 /**
  * Integração real em Postgres descartável (PGlite):
@@ -45,7 +51,7 @@ describe("gestão de formulário — RPC + FAMI (PGlite)", () => {
 
       expect(existsSync(reportPath)).toBe(true);
       const report = JSON.parse(readFileSync(reportPath, "utf8"));
-      expect(report.appliedCount).toBe(13);
+      expect(report.appliedCount).toBe(timestampedMigrationCount());
       expect(report.failures).toEqual([]);
       expect(report.verdict).toBe("PASS_FORM_MANAGEMENT_RPC");
 

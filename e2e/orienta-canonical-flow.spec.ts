@@ -88,10 +88,16 @@ test.describe.serial("jornada canônica da plataforma", () => {
         await header.click();
       }
       await expect(header).toHaveAttribute("aria-expanded", "true");
-      const recommendationField = binding
-        .locator("label")
-        .filter({ hasText: "Recomendação-base" })
-        .locator("textarea");
+      await expect(binding.getByText("Carregando configuração…")).toBeHidden();
+      const configError = binding.getByRole("alert");
+      if (await configError.isVisible()) {
+        throw new Error(
+          `Configuração da pergunta não carregou: ${(await configError.innerText()).trim()}`,
+        );
+      }
+      const recommendationField = binding.getByRole("textbox", {
+        name: /Recomendação-base/,
+      });
       await expect(recommendationField).toBeVisible();
 
       // Preenche a recomendacao-base uma unica vez. O componente ja constroi o

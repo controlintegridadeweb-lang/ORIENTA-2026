@@ -1,7 +1,18 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+
+const reportPath = join(process.cwd(), "var/greenfield-pglite-report.json");
+const runLive =
+  process.env.RUN_GREENFIELD === "1" ||
+  Boolean(process.env.SUPABASE_ACCESS_TOKEN);
+
+function timestampedMigrationCount() {
+  return readdirSync(join(process.cwd(), "supabase", "migrations")).filter((name) =>
+    /^\d{14}_.+\.sql$/.test(name),
+  ).length;
+}
 
 const reportPath = join(process.cwd(), "var/greenfield-pglite-report.json");
 const runLive =
@@ -20,7 +31,7 @@ describe("baseline greenfield em PGlite", () => {
       });
       expect(existsSync(reportPath)).toBe(true);
       const report = JSON.parse(readFileSync(reportPath, "utf8"));
-      expect(report.appliedCount).toBe(13);
+      expect(report.appliedCount).toBe(timestampedMigrationCount());
       expect(report.failures).toEqual([]);
       expect([
         "PASS_BASELINE_APPLIED",
