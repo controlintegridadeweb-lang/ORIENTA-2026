@@ -156,8 +156,11 @@ declare
   v_stale_revision bigint;
   v_actor uuid;
   v_action_text text;
+  v_due date;
   v_member_count integer;
 begin
+  v_due := current_date + 30;
+
   select count(*) into v_member_count
   from public.list_organization_respondents('00000000-0000-0000-0000-0000000000b1');
   if v_member_count <> 1 then
@@ -182,7 +185,7 @@ begin
       a.id,
       'Ação com eixo inconsistente',
       current_date,
-      current_date + 30,
+      v_due,
       'TI — Responsável',
       'todo'
     from public.axes a
@@ -200,11 +203,12 @@ begin
     p_plan_id := null,
     p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
     p_action_text := 'Implantar controle institucional',
-    p_due_date := current_date + 30,
+    p_due_date := v_due,
     p_start_date := current_date,
     p_responsible_sector := 'Tecnologia da Informação',
     p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
     p_progress_percentage := 0,
+    p_expected_revision := null,
     p_execution_notes := 'Observação operacional'
   ) result;
 
@@ -222,6 +226,7 @@ begin
     raise exception 'FALHOU(audit): ator = %, esperado respondente', v_actor;
   end if;
 
+  -- Texto e progresso podem mudar na RPC operacional; o prazo vigente não.
   select result.mode, result.revision into v_mode, v_revision
   from public.save_respondent_action_plan(
     p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
@@ -229,7 +234,7 @@ begin
     p_plan_id := v_plan_id,
     p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
     p_action_text := 'Implantar e monitorar controle institucional',
-    p_due_date := current_date + 45,
+    p_due_date := v_due,
     p_start_date := current_date,
     p_responsible_sector := 'Tecnologia da Informação',
     p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
@@ -250,8 +255,37 @@ begin
       p_organization_id := '00000000-0000-0000-0000-0000000000b1',
       p_plan_id := v_plan_id,
       p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+      p_action_text := 'Implantar e monitorar controle institucional',
+      p_due_date := v_due + 15,
+      p_start_date := current_date,
+      p_responsible_sector := 'Tecnologia da Informação',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_progress_percentage := 50,
+      p_expected_revision := v_revision,
+      p_execution_notes := 'Tentativa de prorrogar prazo sem solicitação'
+    );
+    raise exception 'FALHOU(prazo): RPC alterou due_date sem aprovação administrativa';
+  exception when insufficient_privilege then
+    if sqlerrm not like '%action_plan_due_date_change_requires_approval%' then
+      raise;
+    end if;
+  end;
+
+  if exists (
+    select 1 from public.action_plans
+    where id = v_plan_id and due_date is distinct from v_due
+  ) then
+    raise exception 'FALHOU(prazo): due_date vigente foi alterado sem o fluxo de aprovação';
+  end if;
+
+  begin
+    perform public.save_respondent_action_plan(
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := v_plan_id,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
       p_action_text := 'Sobrescrita concorrente indevida',
-      p_due_date := current_date + 60,
+      p_due_date := v_due,
       p_start_date := current_date,
       p_responsible_sector := 'Tecnologia da Informação',
       p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
@@ -278,11 +312,13 @@ begin
       p_plan_id := null,
       p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
       p_action_text := 'Ação administrativa indevida',
-      p_due_date := current_date + 30,
+      p_due_date := v_due,
       p_start_date := current_date,
       p_responsible_sector := 'Administração',
       p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
-      p_progress_percentage := 0
+      p_progress_percentage := 0,
+      p_expected_revision := null,
+      p_execution_notes := null
     );
     raise exception 'FALHOU(admin): RPC permitiu escrita administrativa';
   exception when insufficient_privilege then
@@ -297,11 +333,13 @@ begin
       p_plan_id := null,
       p_recommendation_id := '00000000-0000-0000-0000-00000000b242',
       p_action_text := 'Ação antes da consolidação',
-      p_due_date := current_date + 30,
+      p_due_date := v_due,
       p_start_date := current_date,
       p_responsible_sector := 'Tecnologia da Informação',
       p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
-      p_progress_percentage := 0
+      p_progress_percentage := 0,
+      p_expected_revision := null,
+      p_execution_notes := null
     );
     raise exception 'FALHOU(estado): RPC aceitou recomendação não editável';
   exception when insufficient_privilege then
@@ -316,11 +354,13 @@ begin
       p_plan_id := null,
       p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
       p_action_text := 'Ação com responsável externo',
-      p_due_date := current_date + 30,
+      p_due_date := v_due,
       p_start_date := current_date,
       p_responsible_sector := 'Tecnologia da Informação',
       p_responsible_user_id := '00000000-0000-0000-0000-0000000000a3',
-      p_progress_percentage := 0
+      p_progress_percentage := 0,
+      p_expected_revision := null,
+      p_execution_notes := null
     );
     raise exception 'FALHOU(responsável): RPC aceitou usuário de outro órgão';
   exception when invalid_parameter_value then
@@ -335,11 +375,13 @@ begin
       p_plan_id := null,
       p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
       p_action_text := '     ',
-      p_due_date := current_date + 30,
+      p_due_date := v_due,
       p_start_date := current_date,
       p_responsible_sector := 'TI',
       p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
-      p_progress_percentage := 0
+      p_progress_percentage := 0,
+      p_expected_revision := null,
+      p_execution_notes := null
     );
     raise exception 'FALHOU(validation): RPC aceitou ação vazia';
   exception when invalid_parameter_value then

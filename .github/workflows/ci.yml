@@ -69,7 +69,7 @@ jobs:
       - name: Audit canonical migrations
         run: npm run db:audit:migrations
       - name: Start Supabase local stack
-        run: supabase start
+        run: bash scripts/ci/start-supabase-local.sh
       - name: Reset local schema from migrations
         run: supabase db reset --local
       - name: Ensure postgres-meta image for type generation
@@ -146,7 +146,7 @@ jobs:
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
       - name: Start isolated Supabase stack
-        run: supabase start
+        run: bash scripts/ci/start-supabase-local.sh
       - name: Reset schema and prepare deterministic E2E accounts
         shell: bash
         run: |
