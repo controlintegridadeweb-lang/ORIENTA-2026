@@ -132,6 +132,7 @@ const requirements = [
   "create or replace function public.request_action_plan_deadline_change",
   "create or replace function public.decide_action_plan_deadline_change",
   "create or replace function public.guard_action_plan_due_date_change",
+  "revoke insert, update, delete, truncate on public.reports",
   "create schema if not exists app_private",
   "create or replace function app_private.is_admin",
   "create or replace function public.materialize_fami_preliminary",

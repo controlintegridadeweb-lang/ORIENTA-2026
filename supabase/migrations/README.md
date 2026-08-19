@@ -1,8 +1,8 @@
 # Migrations do ORIENTA
 
-Este diretório contém **13 migrations SQL timestampadas**: as 10 primeiras formam a baseline canônica validada da primeira implantação e permanecem imutáveis; as seguintes são evoluções pós-baseline.
+Este diretório contém **14 migrations SQL timestampadas**: as 10 primeiras formam a baseline canônica validada da primeira implantação e permanecem imutáveis; as seguintes são evoluções pós-baseline.
 
-Não há migrations corretivas, backfills históricos ou dados reais neste diretório. A sequência atual vai de `20260812000100` a `20260814000100`.
+Não há migrations corretivas, backfills históricos ou dados reais neste diretório. A sequência atual vai de `20260812000100` a `20260819000100`.
 
 ## Ordem canônica
 
@@ -21,6 +21,7 @@ Não há migrations corretivas, backfills históricos ou dados reais neste diret
 | `20260812001100_action_plan_deadline_change_requests.sql` | Solicitação, decisão administrativa, RLS e auditoria para alteração do prazo de conclusão de ações. |
 | `20260813000100_fami_preliminary_open_period_and_close.sql` | Cálculo do FAMI preliminar no período aberto, snapshot imutável no corte e fechamento automático. |
 | `20260814000100_action_plan_monitoring_export_fields.sql` | Inclui início da ação e ordem oficial de seção/pergunta na RPC de monitoramento do plano de ação. |
+| `20260819000100_reports_data_api_select_only.sql` | Remove INSERT/UPDATE/DELETE/TRUNCATE de `public.reports` na Data API; emissões oficiais permanecem só por RPC. |
 
 ## Regras
 

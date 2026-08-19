@@ -28,6 +28,7 @@ describe("contrato de entrega do relatório oficial", () => {
     expect(sql).toContain("new.status is distinct from 'completed'");
     expect(sql).toContain("after update of status on public.reports");
     expect(sql).toContain("when (old.status = 'preparing' and new.status = 'completed')");
+    expect(sql).toContain("revoke insert, update, delete, truncate on public.reports");
   });
 
   it("dashboard e bundle consomem o relatório documental concluído", () => {
