@@ -3,7 +3,7 @@
 -- Pré: _seed_minimal.sql.
 -- Saída esperada: "EVIDENCE ADJUSTMENT ROUNDTRIP: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 update public.cycles
 set state = 'awaiting_adjustment'
 where id = '00000000-0000-0000-0000-000000000cc1';
@@ -39,7 +39,7 @@ set validation_status = excluded.validation_status,
     validated_at = excluded.validated_at,
     submitted_at = excluded.submitted_at,
     deactivated_at = null;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -80,7 +80,7 @@ begin
   end if;
 end $$;
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 insert into public.evidences(
   id, response_id, kind, storage_path, validation_status,
   submitted_at, submitted_by
@@ -93,7 +93,7 @@ insert into public.evidences(
 set validation_status = 'pending',
     submitted_at = excluded.submitted_at,
     deactivated_at = null;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -140,7 +140,7 @@ begin
     raise exception 'FALHOU: novas evidências foram desativadas';
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.evidences
   where id in (
     '00000000-0000-0000-0000-00000000e011',
@@ -151,7 +151,7 @@ begin
   update public.cycles
   set state = 'validated'
   where id = '00000000-0000-0000-0000-000000000cc1';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'EVIDENCE ADJUSTMENT ROUNDTRIP: OK';
 end $$;

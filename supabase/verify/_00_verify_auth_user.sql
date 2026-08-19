@@ -156,19 +156,104 @@ revoke all on function public._verify_ensure_auth_user(uuid, text)
 grant execute on function public._verify_ensure_auth_user(uuid, text)
   to postgres, service_role;
 
-create or replace function public._verify_set_replication_replica()
+-- No Supabase local recente o papel `postgres` não é superuser. SET replica
+-- direto aborta o verify; aqui tentamos supabase_admin e devolvemos o papel.
+create or replace function public._verify_set_replication_role(
+  p_role text,
+  p_is_local boolean default false
+)
+returns void
+language plpgsql
+as $verify$
+declare
+  v_current text := current_user;
+  v_try text;
+begin
+  if p_role not in ('replica', 'origin', 'default') then
+    raise exception '_verify_set_replication_role_invalid';
+  end if;
+
+  begin
+    perform set_config('session_replication_role', p_role, p_is_local);
+    return;
+  exception
+    when insufficient_privilege then
+      null;
+  end;
+
+  foreach v_try in array array['supabase_admin']
+  loop
+    if not exists (select 1 from pg_roles where rolname = v_try) then
+      continue;
+    end if;
+    begin
+      execute format('set role %I', v_try);
+    exception
+      when others then
+        continue;
+    end;
+    begin
+      perform set_config('session_replication_role', p_role, p_is_local);
+    exception
+      when others then
+        begin
+          execute format('set role %I', v_current);
+        exception
+          when others then
+            null;
+        end;
+        continue;
+    end;
+    begin
+      execute format('set role %I', v_current);
+    exception
+      when others then
+        null;
+    end;
+    return;
+  end loop;
+
+  raise notice 'session_replication_role=% indisponível neste papel', p_role;
+end;
+$verify$;
+
+drop function if exists public._verify_set_replication_replica();
+drop function if exists public._verify_set_replication_replica(boolean);
+drop function if exists public._verify_set_replication_origin(boolean);
+
+create or replace function public._verify_set_replication_replica(
+  p_is_local boolean default false
+)
 returns void
 language plpgsql
 as $verify$
 begin
-  perform set_config('session_replication_role', 'replica', false);
-exception
-  when insufficient_privilege then
-    raise notice 'session_replication_role=replica indisponível neste papel';
+  perform public._verify_set_replication_role('replica', p_is_local);
 end;
 $verify$;
 
-revoke all on function public._verify_set_replication_replica()
+create or replace function public._verify_set_replication_origin(
+  p_is_local boolean default false
+)
+returns void
+language plpgsql
+as $verify$
+begin
+  perform public._verify_set_replication_role('origin', p_is_local);
+end;
+$verify$;
+
+revoke all on function public._verify_set_replication_role(text, boolean)
   from public, anon, authenticated;
-grant execute on function public._verify_set_replication_replica()
+grant execute on function public._verify_set_replication_role(text, boolean)
+  to postgres, service_role;
+
+revoke all on function public._verify_set_replication_replica(boolean)
+  from public, anon, authenticated;
+grant execute on function public._verify_set_replication_replica(boolean)
+  to postgres, service_role;
+
+revoke all on function public._verify_set_replication_origin(boolean)
+  from public, anon, authenticated;
+grant execute on function public._verify_set_replication_origin(boolean)
   to postgres, service_role;

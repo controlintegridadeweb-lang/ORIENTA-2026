@@ -2,7 +2,7 @@
 -- Verificação de integração: cronograma completo, revisão e invalidação de jobs.
 -- Pré: _seed_minimal.sql. Saída esperada: "CYCLE SCHEDULE INTEGRITY: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 insert into public.form_periods(id, form_version_id, period_code, label, status)
 values (
   'f0000000-0000-0000-0000-00000000ca26',
@@ -31,7 +31,7 @@ on conflict (id) do update set
   validation_deadline_at = null,
   cycle_close_at = null,
   schedule_revision = 0;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -111,7 +111,7 @@ begin
     raise exception 'FALHOU(job obsoleto): %', v_action;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.automation_jobs job
   where exists (
     select 1 from public.automation_job_items item
@@ -121,7 +121,7 @@ begin
   );
   delete from public.audit_logs where record_id = v_cycle;
   delete from public.cycles where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'CYCLE SCHEDULE INTEGRITY: OK';
 end $$;

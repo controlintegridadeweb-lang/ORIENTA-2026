@@ -1,9 +1,9 @@
 -- Verifica a substituição atômica das dispensas por pergunta.
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 insert into public.organizations(id, name, acronym)
 values ('00000000-0000-0000-0000-0000000000b2', 'Org Seed 2', 'SEED2')
 on conflict do nothing;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare

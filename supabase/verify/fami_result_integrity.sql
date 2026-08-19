@@ -38,14 +38,14 @@ end $$;
 -- Simula um diagnóstico integralmente N/A. O resultado continua materializável:
 -- pontos possíveis e percentual iguais a zero, com nível nulo em todos os
 -- escopos. O modo replica é restrito a esta transação de verificação.
-set local session_replication_role = replica;
+select public._verify_set_replication_replica(true);
 update public.responses
 set answer = 'not_applicable'::public.answer_value,
     is_not_applicable = true,
     na_validation_status = 'approved'::public.na_validation_status,
     na_justification = 'Justificativa institucional de não aplicabilidade para o cenário FAMI integralmente N/A.'
 where id = '00000000-0000-0000-0000-000000000dd1';
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare

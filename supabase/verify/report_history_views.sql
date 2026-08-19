@@ -7,7 +7,7 @@
 -- Pré: _seed_minimal.sql.
 -- Saída esperada: "REPORT HISTORY VIEWS: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 insert into public.form_periods(id, form_version_id, period_code, label, status)
 values (
@@ -42,7 +42,7 @@ insert into public.fami_results(
   '00000000-0000-0000-0000-00000000e0e8',
   'global', null, 1.5, 1.5, 100, 5
 );
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -112,17 +112,17 @@ begin
 
   -- Mesmo sob uma alteração administrativa forçada, a view não pode marcar
   -- o documento como atual quando a referência diverge do PDF congelado.
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles set reference_start_year = 2024, reference_end_year = 2026 where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
   select is_current into v_current from public.report_history_entries
   where cycle_processing_id = v_processing and emission_version = 2;
   if v_current is not false then
     raise exception 'FALHOU(referência): emissão permaneceu atual após divergência forçada';
   end if;
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles set reference_start_year = 2025, reference_end_year = 2026 where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   update public.cycles set action_plan_revision = 1 where id = v_cycle;
   select is_current into v_current from public.report_history_entries
@@ -131,22 +131,22 @@ begin
     raise exception 'FALHOU(plano): emissão permaneceu atual após alteração do plano';
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles set action_plan_revision = 0, state = 'in_response' where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
   select is_current into v_current from public.report_history_entries
   where cycle_processing_id = v_processing and emission_version = 2;
   if v_current is not false then
     raise exception 'FALHOU(reabertura): emissão permaneceu atual após reabrir ciclo';
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.reports where cycle_id = v_cycle;
   delete from storage.objects where bucket_id = 'relatorios' and name in (v_first_path, v_second_path);
   delete from public.fami_results where cycle_id = v_cycle;
   delete from public.cycle_processings where id = v_processing;
   delete from public.cycles where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 end $$;
 
 do $$ begin

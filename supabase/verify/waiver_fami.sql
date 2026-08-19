@@ -5,7 +5,7 @@
 
 begin;
 
-set local session_replication_role = replica;
+select public._verify_set_replication_replica(true);
 insert into public.question_organization_waivers(
   id, organization_id, question_id, reason, waived_by
 ) values (
@@ -15,7 +15,7 @@ insert into public.question_organization_waivers(
   'dispensa de teste',
   '00000000-0000-0000-0000-0000000000a1'
 ) on conflict do nothing;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare

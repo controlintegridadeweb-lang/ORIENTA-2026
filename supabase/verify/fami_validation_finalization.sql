@@ -16,7 +16,7 @@
 
 begin;
 
-set local session_replication_role = replica;
+select public._verify_set_replication_replica(true);
 update public.cycles
 set state = 'in_validation', validated_at = null, closed_at = null
 where id = '00000000-0000-0000-0000-000000000cc1';
@@ -42,7 +42,7 @@ delete from public.response_snapshots
 where cycle_processing_id = '00000000-0000-0000-0000-000000000ee1';
 delete from public.evidences
 where response_id = '00000000-0000-0000-0000-000000000dd1';
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare

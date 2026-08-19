@@ -6,7 +6,7 @@
 -- Exercitamos reabertura e atualização de cronograma.
 -- Pré: _seed_minimal.sql. Saída esperada: "AUDIT ACTOR: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 insert into public.form_periods(id, form_version_id, period_code, label, status)
 values
   (
@@ -55,7 +55,7 @@ on conflict (id) do update
 insert into public.cycle_processings(id, cycle_id, processing_version, status, completed_at)
 values ('00000000-0000-0000-0000-00000000ad18','00000000-0000-0000-0000-00000000ad17',1,'completed', now())
 on conflict (id) do nothing;
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -100,7 +100,7 @@ begin
     raise exception 'FALHOU(schedule): ator auditado = %, esperado %', v_logged, v_actor;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.automation_jobs job
   where exists (
     select 1 from public.automation_job_items item
@@ -120,7 +120,7 @@ begin
     '00000000-0000-0000-0000-00000000ad17',
     '00000000-0000-0000-0000-00000000ad19'
   );
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'AUDIT ACTOR: OK';
 end $$;

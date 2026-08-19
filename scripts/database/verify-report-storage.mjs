@@ -40,7 +40,7 @@ async function withReplicaClient(fn) {
   await db.connect();
   try {
     await db.query("begin");
-    await db.query("set local session_replication_role = replica");
+    await db.query("select public._verify_set_replication_replica(true)");
     await fn(db);
     await db.query("commit");
   } catch (error) {

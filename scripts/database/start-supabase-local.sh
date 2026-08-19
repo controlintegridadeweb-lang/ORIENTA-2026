@@ -49,6 +49,11 @@ for attempt in 1 2 3 4 5; do
   stop_leftovers
   wait_port_free "${DB_PORT}" || true
   if supabase start; then
+    if ! docker exec "${PROJECT_DB_CONTAINER}" \
+      psql -U supabase_admin -d postgres -v ON_ERROR_STOP=1 \
+      -c "grant supabase_admin to postgres;"; then
+      echo "Aviso: não concedeu supabase_admin a postgres; fixtures que exigem replica podem falhar."
+    fi
     exit 0
   fi
   echo "supabase start falhou (tentativa ${attempt}); limpando leftovers..."

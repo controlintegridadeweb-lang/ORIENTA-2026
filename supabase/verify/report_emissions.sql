@@ -10,7 +10,7 @@
 -- Pré: _seed_minimal.sql.
 -- Saída esperada: "REPORT EMISSIONS: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 select public._verify_ensure_auth_user(
   '00000000-0000-0000-0000-00000000a0e7',
@@ -64,7 +64,7 @@ insert into public.cycle_processings(
 )
 on conflict (id) do update set status = 'completed', completed_at = excluded.completed_at;
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -182,9 +182,9 @@ begin
   exception when sqlstate '55000' then null;
   end;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles set state = 'in_response', closed_at = null where id = v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
   begin
     perform public.reserve_report_emission(
       v_cycle, v_processing, v_actor, 0, now(), 'Tentativa em ciclo reaberto.'
@@ -193,7 +193,7 @@ begin
   exception when sqlstate 'P0001' then null;
   end;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.notification_outbox
   where recipient_user_id = v_respondent and kind = 'official_report_available';
   delete from public.user_notifications
@@ -204,7 +204,7 @@ begin
   delete from public.cycles where id = v_cycle;
   delete from public.profiles where user_id = v_respondent;
   delete from auth.users where id = v_respondent;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'REPORT EMISSIONS: OK';
 end $$;

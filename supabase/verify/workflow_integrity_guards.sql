@@ -3,7 +3,7 @@
 -- Pré: _seed_minimal.sql. Saída: "WORKFLOW INTEGRITY GUARDS: OK".
 -- ============================================================================
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 -- Ciclo usado para provar que a submissão é revalidada dentro da RPC, depois
 -- da aquisição do lock, e não apenas na camada HTTP.
@@ -73,7 +73,7 @@ select
 from public.axes a
 where a.name = 'Governanca';
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -195,7 +195,7 @@ begin
   end;
 end $$;
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 delete from public.forms
 where id = '10000000-0000-0000-0000-000000000011';
 delete from public.action_plans
@@ -217,7 +217,7 @@ where id in (
   '10000000-0000-0000-0000-000000000005',
   '10000000-0000-0000-0000-000000000006'
 );
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$ begin
   raise notice 'WORKFLOW INTEGRITY GUARDS: OK';

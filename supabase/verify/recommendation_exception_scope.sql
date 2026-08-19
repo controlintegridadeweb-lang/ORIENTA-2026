@@ -3,7 +3,7 @@
 -- Pré: _seed_minimal.sql. Fixtures locais (ciclo/recomendação) — não depende de
 -- outros verifies; action_plans_cycle_editability limpa os próprios ids.
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 insert into public.form_periods(id, form_version_id, period_code, label, status)
 values (
@@ -53,7 +53,7 @@ values (
 )
 on conflict (id) do nothing;
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 begin
@@ -150,7 +150,7 @@ begin
 end;
 $$;
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 delete from public.recommendation_exceptions
 where id = '00000000-0000-0000-0000-00000000ec01';
 delete from public.recommendations
@@ -159,4 +159,4 @@ delete from public.cycle_processings
 where id = '00000000-0000-0000-0000-00000000a251';
 delete from public.cycles
 where id = '00000000-0000-0000-0000-00000000c251';
-reset session_replication_role;
+select public._verify_set_replication_origin();

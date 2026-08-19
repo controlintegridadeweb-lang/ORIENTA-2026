@@ -9,7 +9,7 @@
 -- Pré: _seed_minimal.sql.
 -- Saída esperada: "VALIDATE EVIDENCE CONSOLIDATED: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 insert into public.evidences(
   id, response_id, kind, storage_path, validation_status, submitted_by
 ) values
@@ -33,7 +33,7 @@ set validation_status = 'pending',
 update public.cycles
 set state = 'in_validation'
 where id = '00000000-0000-0000-0000-000000000cc1';
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -173,7 +173,7 @@ begin
     raise exception 'FALHOU(rollback): evidência mudou para %', v_status;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.evidences
   where id in (
     '00000000-0000-0000-0000-00000000e001',
@@ -189,7 +189,7 @@ begin
   update public.cycles
   set state = 'validated'
   where id = '00000000-0000-0000-0000-000000000cc1';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'VALIDATE EVIDENCE CONSOLIDATED: OK';
 end $$;

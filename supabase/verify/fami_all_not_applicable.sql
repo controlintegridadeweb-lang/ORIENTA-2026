@@ -8,7 +8,7 @@
 
 begin;
 
-set local session_replication_role = replica;
+select public._verify_set_replication_replica(true);
 
 update public.cycles
 set state = 'in_validation', validated_at = null, closed_at = null
@@ -52,7 +52,7 @@ on conflict (organization_id, question_id) do update set
   waived_by = excluded.waived_by,
   waived_at = statement_timestamp();
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare

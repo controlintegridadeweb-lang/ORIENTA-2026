@@ -10,8 +10,8 @@
 --   • cycles.period_id          NOT NULL → form_periods (identidade do período)
 --   • UNIQUE (period_id, organization_id)
 --   • action_plans.start_date   NOT NULL e start_date <= due_date
---   • triggers de imutabilidade em axes/question_versions/snapshots
---     (contornados aqui com session_replication_role=replica, só para seed).
+--   • form_versions published exige form_assignments (não há estado draft)
+--   • replica é tentada para imutabilidade; o seed permanece válido sem ela.
 --
 -- Uso: psql ... -f supabase/verify/_seed_minimal.sql  (idempotente)
 -- Deixa um ciclo 'validated' pronto (ids fixos abaixo) para os testes.
@@ -26,7 +26,6 @@ insert into public.organizations(id, name, acronym) values ('00000000-0000-0000-
 insert into public.profiles(user_id, role, organization_id) values ('00000000-0000-0000-0000-0000000000a1','admin', null) on conflict do nothing;
 -- Os eixos canônicos vêm de `supabase/seeds/0000_axes.sql` no reset local
 -- (UUIDs aleatórios). Não inventamos IDs: reutilizamos o catálogo por nome.
--- session_replication_role=replica mantém o seed isolado dos gatilhos de domínio.
 insert into public.axes(name) values
   ('Governanca'),
   ('Ambiental'),
@@ -93,6 +92,12 @@ on conflict (id) do update set
   axis_id = excluded.axis_id,
   axis_name = excluded.axis_name;
 insert into public.forms(id, name, created_by) values ('00000000-0000-0000-0000-000000000aa1','Form Seed','00000000-0000-0000-0000-0000000000a1') on conflict do nothing;
+insert into public.form_assignments(form_id, organization_id, assigned_by)
+  values (
+    '00000000-0000-0000-0000-000000000aa1',
+    '00000000-0000-0000-0000-0000000000b1',
+    '00000000-0000-0000-0000-0000000000a1'
+  ) on conflict (form_id, organization_id) do nothing;
 insert into public.form_versions(id, form_id, version, state) values ('00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-000000000aa1',1,'published') on conflict do nothing;
 insert into public.form_questions(form_version_id, question_version_id, order_index)
   values ('00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000f1',1) on conflict do nothing;
@@ -121,10 +126,4 @@ insert into public.cycle_processings(id, cycle_id, processing_version, status)
 insert into public.responses(id, cycle_id, question_version_id, answer, is_not_applicable, created_by)
   values ('00000000-0000-0000-0000-000000000dd1','00000000-0000-0000-0000-000000000cc1','00000000-0000-0000-0000-0000000000f1','yes',false,'00000000-0000-0000-0000-0000000000a1') on conflict do nothing;
 
-do $$
-begin
-  perform set_config('session_replication_role', 'origin', false);
-exception
-  when insufficient_privilege then
-    null;
-end $$;
+select public._verify_set_replication_origin();

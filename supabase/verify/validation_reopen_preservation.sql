@@ -9,7 +9,7 @@
 -- processing working e bloquearia validation_reopen_working_processing_exists).
 -- Saída esperada: "VALIDATION REOPEN PRESERVATION: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 insert into public.form_periods(id, form_version_id, period_code, label, status)
   values (
@@ -72,7 +72,7 @@ insert into public.fami_results(
   )
   on conflict do nothing;
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -154,13 +154,13 @@ begin
     raise exception 'FALHOU(validation reopen): evento auditável ausente ou divergente (%).', v_event_count;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.cycle_validation_reopen_events where cycle_id = v_cycle;
   delete from public.fami_results where cycle_id = v_cycle;
   delete from public.cycle_processings where cycle_id = v_cycle;
   delete from public.cycles where id = v_cycle;
   delete from public.form_periods where id = 'f0000000-0000-0000-0000-00000000c0df';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'VALIDATION REOPEN PRESERVATION: OK';
 end $$;

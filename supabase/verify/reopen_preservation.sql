@@ -7,7 +7,7 @@
 -- a in_response com reopen_count++. Pré: _seed_minimal.sql.
 -- Saída esperada: "REOPEN PRESERVATION: OK".
 -- ============================================================================
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 -- Cenário próprio (ids dedicados) para não colidir com o seed base.
 insert into public.form_periods(id, form_version_id, period_code, label, status)
@@ -44,7 +44,7 @@ insert into public.reports(cycle_id, cycle_processing_id, file_path, generated_b
   values ('00000000-0000-0000-0000-00000000c0de','00000000-0000-0000-0000-00000000d0c1','00000000-0000-0000-0000-00000000c0de/final-v1.pdf','00000000-0000-0000-0000-0000000000a1')
   on conflict do nothing;
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -100,7 +100,7 @@ begin
   if v_report_proc <> v_proc_v1 then raise exception 'FALHOU(3): relatório migrou'; end if;
 
   -- limpeza do cenário dedicado
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.automation_jobs job
   where exists (
     select 1 from public.automation_job_items item
@@ -112,7 +112,7 @@ begin
   delete from public.fami_results where cycle_id=v_cycle;
   delete from public.cycle_processings where cycle_id=v_cycle;
   delete from public.cycles where id=v_cycle;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   raise notice 'REOPEN PRESERVATION: OK';
 end $$;

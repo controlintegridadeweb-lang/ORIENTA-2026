@@ -17,11 +17,11 @@ begin;
 
 -- O workbench só grava em estados editáveis. O seed é reposicionado apenas
 -- como fixture; a RPC exercitada abaixo continua sujeita às guardas reais.
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 update public.cycles
 set state = 'in_response'
 where id = '00000000-0000-0000-0000-000000000cc1';
-set session_replication_role = default;
+select public._verify_set_replication_origin();
 
 do $$
 declare
@@ -76,11 +76,11 @@ begin
     raise exception 'FALHOU(gravação): justificativa não persistida: %', v_justification;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles
   set state = 'in_validation'
   where id = '00000000-0000-0000-0000-000000000cc1';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   begin
     perform public.finalize_validation_cycle(
@@ -126,11 +126,11 @@ begin
 
   -- Reabre somente a fixture para provar que uma edição posterior da
   -- justificativa substitui o valor canônico e reinicia a validação.
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles
   set state = 'in_response'
   where id = '00000000-0000-0000-0000-000000000cc1';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   select revision into strict v_revision
   from public.responses
@@ -158,11 +158,11 @@ begin
     raise exception 'FALHOU(edição): justificativa antiga permaneceu: %', v_justification;
   end if;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   update public.cycles
   set state = 'in_validation'
   where id = '00000000-0000-0000-0000-000000000cc1';
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 
   begin
     perform public.validate_not_applicable_response(

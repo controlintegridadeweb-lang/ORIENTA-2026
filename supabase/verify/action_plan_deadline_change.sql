@@ -6,7 +6,7 @@
 -- ============================================================================
 begin;
 
-set local session_replication_role = replica;
+select public._verify_set_replication_replica(true);
 select public._verify_ensure_auth_user(
   '00000000-0000-0000-0000-0000000000a9',
   'respondent-deadline@orienta.test'
@@ -59,7 +59,7 @@ select
 from public.axes a
 where a.name = 'Governanca'
 on conflict (id) do update set axis_id = excluded.axis_id;
-set local session_replication_role = origin;
+select public._verify_set_replication_origin(true);
 
 do $$
 declare

@@ -6,7 +6,7 @@
 grant usage on schema public to authenticated;
 grant select on public.action_plans, public.recommendations, public.cycles to authenticated;
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 
 select public._verify_ensure_auth_user(
   '00000000-0000-0000-0000-0000000000a2',
@@ -94,7 +94,7 @@ values
   ('00000000-0000-0000-0000-00000000b242', '00000000-0000-0000-0000-00000000c232', '00000000-0000-0000-0000-00000000a242', '00000000-0000-0000-0000-0000000000f1', 'nao_implementacao', 'Ação bloqueada')
 on conflict (id) do nothing;
 
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 -- A Data API é somente leitura para action_plans. Nem respondente nem admin
 -- podem contornar a RPC e suas validações.
@@ -390,13 +390,13 @@ begin
     null;
   end;
 
-  set session_replication_role = replica;
+  perform public._verify_set_replication_replica();
   delete from public.audit_logs where record_id = v_plan_id;
   delete from public.action_plans where id = v_plan_id;
-  set session_replication_role = default;
+  perform public._verify_set_replication_origin();
 end $$;
 
-set session_replication_role = replica;
+select public._verify_set_replication_replica();
 delete from public.recommendations where id in (
   '00000000-0000-0000-0000-00000000b241',
   '00000000-0000-0000-0000-00000000b242'
@@ -409,7 +409,7 @@ delete from public.cycles where id in (
   '00000000-0000-0000-0000-00000000c231',
   '00000000-0000-0000-0000-00000000c232'
 );
-reset session_replication_role;
+select public._verify_set_replication_origin();
 
 do $$ begin
   raise notice 'ACTION PLANS CYCLE EDITABILITY: OK';
