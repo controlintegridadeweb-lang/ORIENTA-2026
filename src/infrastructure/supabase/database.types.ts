@@ -335,6 +335,7 @@ export type Database = {
           responsible_label: string
           responsible_user_id: string | null
           revision: number
+          start_date: string
           status: Database["public"]["Enums"]["action_plan_status"]
           updated_at: string
         }
@@ -353,6 +354,7 @@ export type Database = {
           responsible_label: string
           responsible_user_id?: string | null
           revision?: number
+          start_date: string
           status?: Database["public"]["Enums"]["action_plan_status"]
           updated_at?: string
         }
@@ -371,6 +373,7 @@ export type Database = {
           responsible_label?: string
           responsible_user_id?: string | null
           revision?: number
+          start_date?: string
           status?: Database["public"]["Enums"]["action_plan_status"]
           updated_at?: string
         }
@@ -3300,6 +3303,7 @@ export type Database = {
           origin: Json | null
           period_label: string | null
           question_id: string | null
+          question_order: number | null
           question_prompt: string | null
           question_version_id: string | null
           recommendation_created_at: string | null
@@ -3309,6 +3313,7 @@ export type Database = {
           recommendation_type: string | null
           section_id: string | null
           section_name: string | null
+          section_order: number | null
           source: string | null
         }
         Relationships: [
@@ -5014,6 +5019,7 @@ export type Database = {
           p_recommendation_id: string
           p_responsible_sector: string
           p_responsible_user_id: string
+          p_start_date: string
         }
         Returns: {
           mode: string
