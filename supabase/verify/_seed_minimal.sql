@@ -7,6 +7,9 @@
 --   • axes.name                   CHECK in ('Governanca','Ambiental','Social')
 --   • questions.evidence_parameter CHECK shape: objeto com chave 'required'
 --   • forms.created_by / responses.created_by  NOT NULL (→ auth.users)
+--   • cycles.period_id          NOT NULL → form_periods (identidade do período)
+--   • UNIQUE (period_id, organization_id)
+--   • action_plans.start_date   NOT NULL e start_date <= due_date
 --   • triggers de imutabilidade em axes/question_versions/snapshots
 --     (contornados aqui com session_replication_role=replica, só para seed).
 --
@@ -60,8 +63,26 @@ insert into public.forms(id, name, created_by) values ('00000000-0000-0000-0000-
 insert into public.form_versions(id, form_id, version, state) values ('00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-000000000aa1',1,'published') on conflict do nothing;
 insert into public.form_questions(form_version_id, question_version_id, order_index)
   values ('00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000f1',1) on conflict do nothing;
-insert into public.cycles(id, form_version_id, organization_id, period_label, state)
-  values ('00000000-0000-0000-0000-000000000cc1','00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000b1','2026','validated') on conflict do nothing;
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+  values (
+    'f0000000-0000-0000-0000-000000000cc1',
+    '00000000-0000-0000-0000-000000000bb1',
+    '2026',
+    '2026',
+    'open'
+  ) on conflict (id) do nothing;
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state)
+  values (
+    '00000000-0000-0000-0000-000000000cc1',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-000000000cc1',
+    '2026',
+    'validated'
+  ) on conflict (id) do update set
+    period_id = excluded.period_id,
+    period_label = excluded.period_label,
+    state = excluded.state;
 insert into public.cycle_processings(id, cycle_id, processing_version, status)
   values ('00000000-0000-0000-0000-000000000ee1','00000000-0000-0000-0000-000000000cc1',1,'working') on conflict do nothing;
 insert into public.responses(id, cycle_id, question_version_id, answer, is_not_applicable, created_by)

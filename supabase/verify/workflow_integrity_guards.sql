@@ -7,13 +7,23 @@ set session_replication_role = replica;
 
 -- Ciclo usado para provar que a submissão é revalidada dentro da RPC, depois
 -- da aquisição do lock, e não apenas na camada HTTP.
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values
+  ('f0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000bb1', 'GUARD-SUBMISSION', 'GUARD-SUBMISSION', 'open'),
+  ('f0000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000bb1', 'GUARD-SCHEDULE', 'GUARD-SCHEDULE', 'open'),
+  ('f0000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000bb1', 'GUARD-INVALID-EDGE', 'GUARD-INVALID-EDGE', 'open'),
+  ('f0000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000bb1', 'GUARD-REOPEN', 'GUARD-REOPEN', 'open'),
+  ('f0000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000bb1', 'GUARD-ACTION-PLAN', 'GUARD-ACTION-PLAN', 'open')
+on conflict (id) do nothing;
+
 insert into public.cycles(
-  id, form_version_id, organization_id, period_label, state,
+  id, form_version_id, organization_id, period_id, period_label, state,
   starts_at, response_deadline_at
 ) values (
   '10000000-0000-0000-0000-000000000001',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-000000000001',
   'GUARD-SUBMISSION', 'in_response', now(), now() + interval '30 days'
 );
 
@@ -24,12 +34,12 @@ values (
 );
 
 -- Ciclos artificiais para tentar contornar diretamente a máquina de estados.
-insert into public.cycles(id, form_version_id, organization_id, period_label, state)
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state)
 values
-  ('10000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'GUARD-SCHEDULE', 'draft'),
-  ('10000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'GUARD-INVALID-EDGE', 'draft'),
-  ('10000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'GUARD-REOPEN', 'completed'),
-  ('10000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'GUARD-ACTION-PLAN', 'completed');
+  ('10000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'f0000000-0000-0000-0000-000000000003', 'GUARD-SCHEDULE', 'draft'),
+  ('10000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'f0000000-0000-0000-0000-000000000004', 'GUARD-INVALID-EDGE', 'draft'),
+  ('10000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'f0000000-0000-0000-0000-000000000005', 'GUARD-REOPEN', 'completed'),
+  ('10000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'f0000000-0000-0000-0000-000000000006', 'GUARD-ACTION-PLAN', 'completed');
 
 insert into public.cycle_processings(id, cycle_id, processing_version, status)
 values (
@@ -48,13 +58,13 @@ insert into public.recommendations(
 );
 
 insert into public.action_plans(
-  id, recommendation_id, axis_id, action_text, due_date,
+  id, recommendation_id, axis_id, action_text, start_date, due_date,
   responsible_label, status
 ) values (
   '10000000-0000-0000-0000-000000000009',
   '10000000-0000-0000-0000-000000000008',
   '00000000-0000-0000-0000-0000000000c1',
-  'Manter a cobertura institucional', current_date + 30,
+  'Manter a cobertura institucional', current_date, current_date + 30,
   'Responsável institucional', 'todo'
 );
 

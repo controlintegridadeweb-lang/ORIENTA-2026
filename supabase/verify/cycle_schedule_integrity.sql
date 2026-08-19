@@ -3,17 +3,28 @@
 -- Pré: _seed_minimal.sql. Saída esperada: "CYCLE SCHEDULE INTEGRITY: OK".
 -- ============================================================================
 set session_replication_role = replica;
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-00000000ca26',
+  '00000000-0000-0000-0000-000000000bb1',
+  'schedule-integrity',
+  'schedule-integrity',
+  'open'
+)
+on conflict (id) do nothing;
 insert into public.cycles(
-  id, form_version_id, organization_id, period_label, state, reopen_count
+  id, form_version_id, organization_id, period_id, period_label, state, reopen_count
 ) values (
   '00000000-0000-0000-0000-00000000ca26',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-00000000ca26',
   'schedule-integrity',
   'draft',
   0
 )
 on conflict (id) do update set
+  period_id = excluded.period_id,
   state = 'draft',
   starts_at = null,
   response_deadline_at = null,

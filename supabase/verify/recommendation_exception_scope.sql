@@ -5,15 +5,28 @@
 
 set session_replication_role = replica;
 
-insert into public.cycles(id, form_version_id, organization_id, period_label, state)
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-00000000c251',
+  '00000000-0000-0000-0000-000000000bb1',
+  'EXC-scope',
+  'EXC-scope',
+  'open'
+)
+on conflict (id) do nothing;
+
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state)
 values (
   '00000000-0000-0000-0000-00000000c251',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-00000000c251',
   'EXC-scope',
   'validated'
 )
-on conflict (id) do update set state = excluded.state;
+on conflict (id) do update set
+  period_id = excluded.period_id,
+  state = excluded.state;
 
 insert into public.cycle_processings(id, cycle_id, processing_version, status)
 values (

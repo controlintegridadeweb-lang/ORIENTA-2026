@@ -9,14 +9,24 @@
 -- ============================================================================
 set session_replication_role = replica;
 
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-00000000c0e8',
+  '00000000-0000-0000-0000-000000000bb1',
+  'report-history-views',
+  'Ciclo institucional',
+  'open'
+);
+
 insert into public.cycles(
-  id, form_version_id, organization_id, period_label,
+  id, form_version_id, organization_id, period_id, period_label,
   reference_start_year, reference_end_year, action_plan_revision,
   state, closed_at
 ) values (
   '00000000-0000-0000-0000-00000000c0e8',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-00000000c0e8',
   'Ciclo institucional',
   2025, 2026, 0,
   'completed', now()

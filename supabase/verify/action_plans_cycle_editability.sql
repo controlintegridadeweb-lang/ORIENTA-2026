@@ -38,11 +38,44 @@ values (
 on conflict (user_id) do update
   set role = excluded.role, organization_id = excluded.organization_id;
 
-insert into public.cycles(id, form_version_id, organization_id, period_label, state)
+insert into public.form_periods(id, form_version_id, period_code, label, status)
 values
-  ('00000000-0000-0000-0000-00000000c231', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'AP-validated', 'validated'),
-  ('00000000-0000-0000-0000-00000000c232', '00000000-0000-0000-0000-000000000bb1', '00000000-0000-0000-0000-0000000000b1', 'AP-in-validation', 'in_validation')
-on conflict (id) do update set state = excluded.state;
+  (
+    'f0000000-0000-0000-0000-00000000c231',
+    '00000000-0000-0000-0000-000000000bb1',
+    'AP-validated',
+    'AP-validated',
+    'open'
+  ),
+  (
+    'f0000000-0000-0000-0000-00000000c232',
+    '00000000-0000-0000-0000-000000000bb1',
+    'AP-in-validation',
+    'AP-in-validation',
+    'open'
+  )
+on conflict (id) do nothing;
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state)
+values
+  (
+    '00000000-0000-0000-0000-00000000c231',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-00000000c231',
+    'AP-validated',
+    'validated'
+  ),
+  (
+    '00000000-0000-0000-0000-00000000c232',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-00000000c232',
+    'AP-in-validation',
+    'in_validation'
+  )
+on conflict (id) do update set
+  period_id = excluded.period_id,
+  state = excluded.state;
 
 -- Recomendação oficial exige processamento completed + ciclo validated/completed.
 insert into public.cycle_processings(id, cycle_id, processing_version, status, completed_at)
@@ -70,11 +103,11 @@ do $$
 begin
   begin
     insert into public.action_plans(
-      recommendation_id, axis_id, action_text, due_date, responsible_label, status
+      recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
     ) values (
       '00000000-0000-0000-0000-00000000b241',
       '00000000-0000-0000-0000-0000000000c1',
-      'Contorno indevido do respondente', current_date + 30,
+      'Contorno indevido do respondente', current_date, current_date + 30,
       'TI — Responsável', 'todo'
     );
     raise exception 'FALHOU(data-api): respondente escreveu diretamente em action_plans';
@@ -91,11 +124,11 @@ do $$
 begin
   begin
     insert into public.action_plans(
-      recommendation_id, axis_id, action_text, due_date, responsible_label, status
+      recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
     ) values (
       '00000000-0000-0000-0000-00000000b241',
       '00000000-0000-0000-0000-0000000000c1',
-      'Contorno indevido do administrador', current_date + 30,
+      'Contorno indevido do administrador', current_date, current_date + 30,
       'TI — Administrador', 'todo'
     );
     raise exception 'FALHOU(data-api): administrador escreveu diretamente em action_plans';
@@ -132,11 +165,11 @@ begin
   -- Mesmo uma escrita interna precisa respeitar a projeção do eixo.
   begin
     insert into public.action_plans(
-      recommendation_id, axis_id, action_text, due_date, responsible_label, status
+      recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
     ) values (
       '00000000-0000-0000-0000-00000000b241',
       '00000000-0000-0000-0000-0000000000c2',
-      'Ação com eixo inconsistente', current_date + 30,
+      'Ação com eixo inconsistente', current_date, current_date + 30,
       'TI — Responsável', 'todo'
     );
     raise exception 'FALHOU(axis): plano aceitou eixo divergente da recomendação';

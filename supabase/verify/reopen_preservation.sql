@@ -10,9 +10,30 @@
 set session_replication_role = replica;
 
 -- Cenário próprio (ids dedicados) para não colidir com o seed base.
-insert into public.cycles(id, form_version_id, organization_id, period_label, state, reopen_count, closed_at)
-  values ('00000000-0000-0000-0000-00000000c0de','00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000b1','2025','completed',0, now())
-  on conflict (id) do update set state='completed', reopen_count=0;
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+  values (
+    'f0000000-0000-0000-0000-00000000c0de',
+    '00000000-0000-0000-0000-000000000bb1',
+    '2025',
+    '2025',
+    'open'
+  )
+  on conflict (id) do nothing;
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state, reopen_count, closed_at)
+  values (
+    '00000000-0000-0000-0000-00000000c0de',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-00000000c0de',
+    '2025',
+    'completed',
+    0,
+    now()
+  )
+  on conflict (id) do update set
+    period_id = excluded.period_id,
+    state='completed',
+    reopen_count=0;
 insert into public.cycle_processings(id, cycle_id, processing_version, status, completed_at)
   values ('00000000-0000-0000-0000-00000000d0c1','00000000-0000-0000-0000-00000000c0de',1,'completed', now())
   on conflict (id) do nothing;

@@ -13,9 +13,26 @@ on conflict do nothing;
 insert into public.profiles(user_id, role, organization_id, full_name)
 values ('00000000-0000-0000-0000-0000000000a9','respondent','00000000-0000-0000-0000-0000000000b1','Respondente Prazo')
 on conflict (user_id) do update set role=excluded.role, organization_id=excluded.organization_id;
-insert into public.cycles(id, form_version_id, organization_id, period_label, state)
-values ('00000000-0000-0000-0000-000000000cc9','00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000b1','deadline-change','validated')
-on conflict (id) do update set state='validated';
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-000000000cc9',
+  '00000000-0000-0000-0000-000000000bb1',
+  'deadline-change',
+  'deadline-change',
+  'open'
+) on conflict (id) do nothing;
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state)
+values (
+  '00000000-0000-0000-0000-000000000cc9',
+  '00000000-0000-0000-0000-000000000bb1',
+  '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-000000000cc9',
+  'deadline-change',
+  'validated'
+)
+on conflict (id) do update set
+  period_id = excluded.period_id,
+  state='validated';
 insert into public.cycle_processings(id, cycle_id, processing_version, status, fami_policy_version, completed_at)
 values ('00000000-0000-0000-0000-000000000ee9','00000000-0000-0000-0000-000000000cc9',1,'completed','v7',now())
 on conflict (id) do update set status='completed', completed_at=now();

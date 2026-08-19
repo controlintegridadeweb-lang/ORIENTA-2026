@@ -7,12 +7,48 @@
 -- Pré: _seed_minimal.sql. Saída esperada: "AUDIT ACTOR: OK".
 -- ============================================================================
 set session_replication_role = replica;
-insert into public.cycles(id, form_version_id, organization_id, period_label, state, reopen_count, closed_at)
+insert into public.form_periods(id, form_version_id, period_code, label, status)
 values
-  ('00000000-0000-0000-0000-00000000ad17','00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000b1','audit-reopen','completed',0, now()),
-  ('00000000-0000-0000-0000-00000000ad19','00000000-0000-0000-0000-000000000bb1','00000000-0000-0000-0000-0000000000b1','audit-schedule','draft',0, null)
+  (
+    'f0000000-0000-0000-0000-00000000ad17',
+    '00000000-0000-0000-0000-000000000bb1',
+    'audit-reopen',
+    'audit-reopen',
+    'open'
+  ),
+  (
+    'f0000000-0000-0000-0000-00000000ad19',
+    '00000000-0000-0000-0000-000000000bb1',
+    'audit-schedule',
+    'audit-schedule',
+    'open'
+  )
+on conflict (id) do nothing;
+insert into public.cycles(id, form_version_id, organization_id, period_id, period_label, state, reopen_count, closed_at)
+values
+  (
+    '00000000-0000-0000-0000-00000000ad17',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-00000000ad17',
+    'audit-reopen',
+    'completed',
+    0,
+    now()
+  ),
+  (
+    '00000000-0000-0000-0000-00000000ad19',
+    '00000000-0000-0000-0000-000000000bb1',
+    '00000000-0000-0000-0000-0000000000b1',
+    'f0000000-0000-0000-0000-00000000ad19',
+    'audit-schedule',
+    'draft',
+    0,
+    null
+  )
 on conflict (id) do update
   set state = excluded.state,
+      period_id = excluded.period_id,
       reopen_count = excluded.reopen_count,
       closed_at = excluded.closed_at;
 

@@ -26,20 +26,32 @@ insert into public.profiles(user_id, role, organization_id, full_name) values (
   organization_id = excluded.organization_id,
   full_name = excluded.full_name;
 
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-00000000c0e7',
+  '00000000-0000-0000-0000-000000000bb1',
+  'report-emissions',
+  'Diagnóstico institucional 2026',
+  'open'
+)
+on conflict (id) do nothing;
+
 insert into public.cycles(
-  id, form_version_id, organization_id, period_label,
+  id, form_version_id, organization_id, period_id, period_label,
   reference_start_year, reference_end_year, action_plan_revision,
   state, closed_at
 ) values (
   '00000000-0000-0000-0000-00000000c0e7',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-00000000c0e7',
   'Diagnóstico institucional 2026',
   2026, 2026, 0,
   'completed', now()
 )
 on conflict (id) do update set
   state = 'completed', closed_at = excluded.closed_at,
+  period_id = excluded.period_id,
   reference_start_year = 2026, reference_end_year = 2026,
   action_plan_revision = 0;
 

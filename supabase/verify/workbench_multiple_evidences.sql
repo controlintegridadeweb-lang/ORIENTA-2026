@@ -3,12 +3,22 @@
 
 begin;
 
+insert into public.form_periods(id, form_version_id, period_code, label, status)
+values (
+  'f0000000-0000-0000-0000-000000000cc2',
+  '00000000-0000-0000-0000-000000000bb1',
+  '2026-multiplas-evidencias',
+  '2026-multiplas-evidencias',
+  'open'
+);
+
 insert into public.cycles(
-  id, form_version_id, organization_id, period_label, state
+  id, form_version_id, organization_id, period_id, period_label, state
 ) values (
   '00000000-0000-0000-0000-000000000cc2',
   '00000000-0000-0000-0000-000000000bb1',
   '00000000-0000-0000-0000-0000000000b1',
+  'f0000000-0000-0000-0000-000000000cc2',
   '2026-multiplas-evidencias',
   'in_response'
 );

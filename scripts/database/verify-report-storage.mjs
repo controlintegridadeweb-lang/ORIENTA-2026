@@ -22,6 +22,7 @@ if (!databaseUrl) {
 const ids = {
   organization: "00000000-0000-0000-0000-0000000000b1",
   formVersion: "00000000-0000-0000-0000-000000000bb1",
+  period: "f0000000-0000-0000-0000-00000000c0f8",
   cycle: "00000000-0000-0000-0000-00000000c0f8",
   processing: "00000000-0000-0000-0000-00000000e0f8",
   actor: "00000000-0000-0000-0000-0000000000a1",
@@ -53,16 +54,23 @@ async function withReplicaClient(fn) {
 async function prepareCompletedCycle() {
   await withReplicaClient(async (db) => {
     await db.query(
+      `insert into public.form_periods(id, form_version_id, period_code, label, status)
+       values ($1, $2, 'report-storage', 'Ciclo institucional', 'open')
+       on conflict (id) do nothing`,
+      [ids.period, ids.formVersion],
+    );
+    await db.query(
       `insert into public.cycles(
-         id, form_version_id, organization_id, period_label,
+         id, form_version_id, organization_id, period_id, period_label,
          reference_start_year, reference_end_year, action_plan_revision,
          state, closed_at
-       ) values ($1, $2, $3, 'Ciclo institucional', 2026, 2026, 0, 'completed', now())
+       ) values ($1, $2, $3, $4, 'Ciclo institucional', 2026, 2026, 0, 'completed', now())
        on conflict (id) do update set
          state = 'completed', closed_at = excluded.closed_at,
+         period_id = excluded.period_id,
          reference_start_year = 2026, reference_end_year = 2026,
          action_plan_revision = 0`,
-      [ids.cycle, ids.formVersion, ids.organization],
+      [ids.cycle, ids.formVersion, ids.organization, ids.period],
     );
     await db.query(
       `insert into public.cycle_processings(
