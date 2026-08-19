@@ -11,8 +11,11 @@ import {
 } from "./fixtures/orienta";
 import {
   addQuestion,
+  createCompletedActionWithProof,
   fetchNotifications,
   fetchWorkbenchPayload,
+  publishActionApproval,
+  saveQuestionRecommendation,
   typeQuestionPrompt,
 } from "./support/canonical-journey";
 
@@ -79,39 +82,7 @@ test.describe.serial("jornada canônica da plataforma", () => {
       E2E.approvedNaQuestion,
       E2E.rejectedNaQuestion,
     ]) {
-      const binding = page.getByTestId("question-binding").filter({ hasText: prompt });
-      const header = binding.getByRole("button", { name: prompt });
-      // O primeiro item do acordeao ja abre por padrao; clicar nele sem checar
-      // apenas fecharia o painel e o textarea sumiria. O aria-expanded reflete o
-      // estado de abertura de forma sincrona, sem depender do carregamento async.
-      if ((await header.getAttribute("aria-expanded")) !== "true") {
-        await header.click();
-      }
-      await expect(header).toHaveAttribute("aria-expanded", "true");
-      await expect(binding.getByText("Carregando configuração…")).toBeHidden();
-      const configError = binding.getByRole("alert");
-      if (await configError.isVisible()) {
-        throw new Error(
-          `Configuração da pergunta não carregou: ${(await configError.innerText()).trim()}`,
-        );
-      }
-      const recommendationField = binding.getByRole("textbox", {
-        name: /Recomendação-base/,
-      });
-      await expect(recommendationField).toBeVisible();
-
-      // Preenche a recomendacao-base uma unica vez. O componente ja constroi o
-      // estado a partir de prev[row.id] no updater, entao um unico fill registra
-      // o valor de forma deterministica. Confirmamos pelo sinal positivo
-      // "Recomendação-base configurada." (derivado do estado do React) antes de
-      // salvar — assim garantimos que o PUT enviara a recomendacao, e nao null.
-      const recommendationText = `E2E: executar providência para ${prompt}`;
-      await recommendationField.fill(recommendationText);
-      await expect(binding.getByText("Recomendação-base configurada.")).toBeVisible();
-
-      await binding.getByRole("button", { name: "Salvar configuração" }).click();
-      // A confirmacao permanece apos salvar (a config persistida tem a recomendacao).
-      await expect(binding.getByText("Recomendação-base configurada.")).toBeVisible();
+      await saveQuestionRecommendation(page, prompt);
     }
 
     await page.getByRole("button", { name: "Continuar" }).click();
@@ -371,8 +342,10 @@ test.describe.serial("jornada canônica da plataforma", () => {
       return { status: response.status, body: await response.json() };
     }, cycleId);
     expect(famiResultAfterValidation.status).toBe(200);
+    // v7: Sim com evidência aprovada = 2/2; Não sem evidência = 0/1;
+    // N/A aprovado sai do denominador; N/A rejeitado vira Não = 0/1.
     expect(famiResultAfterValidation.body.snapshot.global.pointsObtained).toBeCloseTo(2);
-    expect(famiResultAfterValidation.body.snapshot.global.pointsPossible).toBeCloseTo(3.5);
+    expect(famiResultAfterValidation.body.snapshot.global.pointsPossible).toBeCloseTo(3);
 
     const recommendationResult = await page.evaluate(async (id) => {
       const response = await fetch(`/api/admin/action-plans?cycleId=${encodeURIComponent(id)}&limit=50`, {
@@ -401,30 +374,13 @@ test.describe.serial("jornada canônica da plataforma", () => {
 
     await loginAs(page, "respondent");
     for (const [index, currentRecommendationId] of recommendationIds.entries()) {
-      await page.goto(`/respondente/plano-acao/${currentRecommendationId}/acoes`);
-      await expect(page.getByRole("button", { name: "Nova ação" })).toBeVisible();
-      await page.getByRole("button", { name: "Nova ação" }).click();
-      const actionText = `E2E: executar plano de adequação ${index + 1}`;
-      await page.getByLabel("Ação ou compromisso").fill(actionText);
-      await page.getByLabel("Área responsável").fill("Unidade de Integridade");
-      const responsibleSelect = page.getByLabel("Respondente responsável");
-      await expect(responsibleSelect).toBeEnabled();
-      await responsibleSelect.selectOption({ index: 1 });
-      await page.getByLabel("Situação").selectOption("completed");
-      await page.getByRole("button", { name: "Cadastrar" }).click();
-      await expect(page.getByText(actionText)).toBeVisible();
+      await createCompletedActionWithProof(page, currentRecommendationId, index);
     }
     await logout(page);
 
     await loginAs(page, "admin");
     for (const currentRecommendationId of recommendationIds) {
-      await page.goto(`/admin/plano-acao/${currentRecommendationId}/monitoramento`);
-      await expect(page.getByRole("button", { name: "Registrar acompanhamento" })).toBeVisible();
-      await page.getByRole("button", { name: "Registrar acompanhamento" }).click();
-      await page.getByLabel("Tipo").selectOption("approval");
-      await page.getByLabel("Registro").fill("Execução concluída e aceita no fluxo E2E.");
-      await page.getByRole("button", { name: "Publicar acompanhamento" }).click();
-      await expect(page.getByText("Aceite vigente").first()).toBeVisible();
+      await publishActionApproval(page, currentRecommendationId);
     }
     await page.goto(`/admin/ciclos/${cycleId}`);
     await clickWithPlatformConfirm(page, "Encerrar avaliação");

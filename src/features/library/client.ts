@@ -31,7 +31,9 @@ const itemResponseSchema = apiResponseSchema({ item: libraryItemContract.optiona
 const questionConfigurationContract = objectContract<QuestionLibraryConfiguration>("configuração da pergunta", {
   questionId: "string", sectionId: "string", metric: "nullable-object", bindings: "object", responseMapping: "object", coverageScore: "number",
 });
-const configurationResponseSchema = apiResponseSchema({ configuration: questionConfigurationContract.optional() });
+const configurationResponseSchema = apiResponseSchema({
+  configuration: questionConfigurationContract.nullable().optional(),
+});
 export async function fetchLibraryCatalog(): Promise<LibraryCatalogSnapshot> {
   const response = await fetch("/api/admin/library/catalog", {
     headers: buildHeaders(),

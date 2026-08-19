@@ -8,7 +8,8 @@
 --     v7, sem ponto provisório) e materializa recomendação por ausência;
 --   • o banco calcula FAMI, recomendações e snapshots pelo mesmo estado vivo;
 --   • o encerramento posterior não aceita payload FAMI nem recalcula;
---   • `validated -> completed` encerra somente o acompanhamento.
+--   • `validated -> completed` exige ação concluída, comprovada e aceita, e
+--     congela o FAMI já materializado.
 -- Pré: _seed_minimal.sql.
 -- Saída esperada: "FAMI VALIDATION FINALIZATION: OK".
 -- ============================================================================
@@ -130,7 +131,8 @@ begin
   end if;
 
   insert into public.action_plans(
-    recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
+    recommendation_id, axis_id, action_text, start_date, due_date, responsible_label,
+    status, progress_percentage, completed_at
   )
   select
     v_recommendation_id,
@@ -139,10 +141,45 @@ begin
     current_date,
     current_date + 30,
     'Responsável institucional',
-    'todo'::public.action_plan_status
+    'done'::public.action_plan_status,
+    100,
+    clock_timestamp()
   from public.recommendations r
   join public.question_versions qv on qv.id = r.question_version_id
   where r.id = v_recommendation_id;
+
+  insert into public.action_plan_documents(
+    action_plan_id, organization_id, action_revision, kind, title,
+    external_link, file_validation_status, uploaded_by
+  )
+  select
+    ap.id,
+    '00000000-0000-0000-0000-0000000000b1',
+    ap.revision,
+    'link',
+    'Comprovante institucional da ação seed',
+    'https://example.org/comprovante-seed',
+    'not_applicable',
+    '00000000-0000-0000-0000-0000000000a1'
+  from public.action_plans ap
+  where ap.recommendation_id = v_recommendation_id;
+
+  insert into public.action_plan_supervision_notes(
+    recommendation_id, action_plan_id, action_revision, action_snapshot,
+    author_id, author_role, note_type, lifecycle_status, body
+  )
+  select
+    v_recommendation_id,
+    ap.id,
+    ap.revision,
+    jsonb_build_object('status', ap.status, 'revision', ap.revision),
+    '00000000-0000-0000-0000-0000000000a1',
+    'admin'::public.app_user_role,
+    'approval',
+    'effective'::public.supervision_note_lifecycle_status,
+    'Aceite da execução da ação seed para encerrar o ciclo.'
+  from public.action_plans ap
+  where ap.recommendation_id = v_recommendation_id;
 
   begin
     perform public.commit_cycle_transition(
