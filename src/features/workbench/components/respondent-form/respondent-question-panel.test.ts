@@ -231,6 +231,7 @@ describe("RespondentSectionQuestions", () => {
     const radios = screen.getAllByRole("radio");
     expect(radios).toHaveLength(3);
     expect(radios.every((radio) => radio.tagName === "INPUT")).toBe(true);
+    expect(radios.every((radio) => !radio.classList.contains("sr-only"))).toBe(true);
     expect(new Set(radios.map((radio) => radio.getAttribute("name"))).size).toBe(1);
   });
 

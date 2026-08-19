@@ -57,7 +57,7 @@ function applyTestingFixtures() {
   for (const file of files) {
     const result = spawnSync(
       "psql",
-      [databaseUrl, "-v", "ON_ERROR_STOP=1", "-f", join(fixturesDir, file)],
+      ["-d", databaseUrl, "-v", "ON_ERROR_STOP=1", "-f", join(fixturesDir, file)],
       { encoding: "utf8" },
     );
     if (result.status !== 0) {

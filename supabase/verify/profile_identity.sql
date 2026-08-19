@@ -8,9 +8,10 @@
 
 begin;
 
-insert into auth.users(id, email)
-values ('00000000-0000-0000-0000-0000000000a4', 'respondent-profile@orienta.test')
-on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a4',
+  'respondent-profile@orienta.test'
+);
 
 insert into public.organizations(id, name, acronym)
 values ('00000000-0000-0000-0000-0000000000b2', 'Org Perfil', 'PERFIL')

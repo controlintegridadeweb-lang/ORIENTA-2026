@@ -148,6 +148,9 @@ input[type="number"] {
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
+  /* Header sticky + navegação de seção + rodapé sticky do formulário. */
+  scroll-padding-top: calc(var(--header-h) + 5.5rem);
+  scroll-padding-bottom: 8rem;
 }
 
 body {

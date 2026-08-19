@@ -235,7 +235,7 @@ export const formSurface = {
       "h-full rounded-full bg-brand/90 transition-[width] duration-500 ease-out",
     questionsList: "mt-8 space-y-6 lg:space-y-7",
     questionCard:
-      "w-full rounded-xl border border-slate-200/80 bg-white p-4 sm:p-7 lg:p-8",
+      "w-full scroll-mt-[calc(var(--header-h)+6rem)] scroll-mb-32 rounded-xl border border-slate-200/80 bg-white p-4 sm:p-7 lg:p-8",
     questionPrompt:
       "break-words text-pretty text-base font-medium leading-relaxed text-slate-900 sm:text-lg lg:leading-relaxed",
     stepEnterForward: "form-step-enter-forward",

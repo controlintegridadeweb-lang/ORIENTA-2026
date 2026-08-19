@@ -16,9 +16,12 @@
 -- Uso: psql ... -f supabase/verify/_seed_minimal.sql  (idempotente)
 -- Deixa um ciclo 'validated' pronto (ids fixos abaixo) para os testes.
 -- ============================================================================
-set session_replication_role = replica;  -- ignora triggers de imutabilidade só no seed
+select public._verify_set_replication_replica();
 
-insert into auth.users(id, email) values ('00000000-0000-0000-0000-0000000000a1','seed@orienta.test') on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a1',
+  'seed@orienta.test'
+);
 insert into public.organizations(id, name, acronym) values ('00000000-0000-0000-0000-0000000000b1','Org Seed','SEED') on conflict do nothing;
 insert into public.profiles(user_id, role, organization_id) values ('00000000-0000-0000-0000-0000000000a1','admin', null) on conflict do nothing;
 -- Os eixos canônicos vêm de `supabase/seeds/0000_axes.sql` no reset local
@@ -118,4 +121,10 @@ insert into public.cycle_processings(id, cycle_id, processing_version, status)
 insert into public.responses(id, cycle_id, question_version_id, answer, is_not_applicable, created_by)
   values ('00000000-0000-0000-0000-000000000dd1','00000000-0000-0000-0000-000000000cc1','00000000-0000-0000-0000-0000000000f1','yes',false,'00000000-0000-0000-0000-0000000000a1') on conflict do nothing;
 
-reset session_replication_role;
+do $$
+begin
+  perform set_config('session_replication_role', 'origin', false);
+exception
+  when insufficient_privilege then
+    null;
+end $$;

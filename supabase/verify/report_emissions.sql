@@ -12,10 +12,10 @@
 -- ============================================================================
 set session_replication_role = replica;
 
-insert into auth.users(id, email) values (
+select public._verify_ensure_auth_user(
   '00000000-0000-0000-0000-00000000a0e7',
   'respondente-relatorio@orienta.test'
-) on conflict do nothing;
+);
 insert into public.profiles(user_id, role, organization_id, full_name) values (
   '00000000-0000-0000-0000-00000000a0e7',
   'respondent',

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { Check } from "lucide-react";
 import { formSurface } from "@/shared/layout/form-surface";
 import { typography } from "@/shared/layout/design-system";
 import { type WorkbenchRow } from "@/features/workbench/load-workbench-payload";
@@ -313,7 +312,7 @@ export function RespondentSectionQuestions({
                             <label
                               key={opt.value}
                               htmlFor={inputId}
-                              className={`flex min-h-12 items-center justify-center gap-2 rounded-xl border text-sm font-medium transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand ${
+                              className={`relative flex min-h-12 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand ${
                                 selected
                                   ? "border-brand-400 bg-brand-50 text-brand-900"
                                   : "border-slate-200/90 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/90"
@@ -327,11 +326,8 @@ export function RespondentSectionQuestions({
                                 checked={selected}
                                 disabled={answerDisabled}
                                 onChange={() => onSelectAnswer(row, opt.value)}
-                                className="sr-only"
+                                className="h-4 w-4 shrink-0 accent-brand-700"
                               />
-                              {selected ? (
-                                <Check className="h-4 w-4 text-brand-600" aria-hidden />
-                              ) : null}
                               {opt.label}
                             </label>
                           );

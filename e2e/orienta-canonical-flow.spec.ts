@@ -3,6 +3,7 @@ import {
   acceptPlatformConfirm,
   clickWithPlatformConfirm,
   E2E,
+  chooseCriterionAnswer,
   expectAdminCycleState,
   futureFortalezaDateTimeInput,
   loginAs,
@@ -158,29 +159,23 @@ test.describe.serial("jornada canônica da plataforma", () => {
     expect(evidenceQuestionId).toMatch(/^[0-9a-f-]{36}$/i);
 
     const evidenceCard = page.locator("li").filter({ hasText: E2E.evidenceQuestion });
-    const evidenceYes = evidenceCard.getByRole("radio", { name: "Sim", exact: true });
-    // A pergunta exige evidencia: responder "Sim" revela a area de anexo (o
-    // input de arquivo so passa a existir depois disso) mas ainda nao salva.
-    // Salvar exige arquivo + titulo e um segundo "Sim".
-    await evidenceYes.click();
+    // "Sim" revela o anexo. O upload preenche o rascunho; persistir usa
+    // "Salvar resposta" (o rádio já marcado não dispara onChange de novo).
+    await chooseCriterionAnswer(evidenceCard, "Sim");
     await evidenceCard.locator('input[type="file"]').setInputFiles({
       name: "evidencia-e2e.txt",
       mimeType: "text/plain",
       buffer: Buffer.from("evidência E2E armazenada no Supabase Storage"),
     });
-    await expect(evidenceCard.getByText("Arquivo enviado")).toBeVisible();
-    await evidenceCard.getByLabel(/T[íi]tulo da evid[êe]ncia/i).fill("Evidência E2E");
-    await evidenceYes.click();
-    // Confirma a persistencia da resposta "Sim" com evidencia antes de seguir.
+    await expect(evidenceCard.getByText("Nova evidência 1")).toBeVisible();
+    await evidenceCard.getByLabel(/^Título/).fill("Evidência E2E");
+    await evidenceCard.getByRole("button", { name: "Salvar resposta" }).click();
     await expect(
       evidenceCard.getByText("Evidência enviada e aguardando validação."),
     ).toBeVisible();
 
     const recommendationCard = page.locator("li").filter({ hasText: E2E.recommendationQuestion });
-    // exact: true evita casar com "Não se aplica neste diagnóstico".
-    const recommendationNo = recommendationCard.getByRole("radio", { name: "Não", exact: true });
-    await recommendationNo.click();
-    await expect(recommendationNo).toHaveAttribute("aria-checked", "true");
+    await chooseCriterionAnswer(recommendationCard, "Não");
 
     for (const [prompt, justification] of [
       [
@@ -193,9 +188,7 @@ test.describe.serial("jornada canônica da plataforma", () => {
       ],
     ] as const) {
       const card = page.locator("li").filter({ hasText: prompt });
-      await card
-        .getByRole("radio", { name: "Não se aplica neste diagnóstico", exact: true })
-        .click();
+      await chooseCriterionAnswer(card, "Não se aplica neste diagnóstico");
       await card.getByLabel("Justificativa").fill(justification);
       await card.getByRole("button", { name: "Salvar justificativa" }).click();
       await expect(card.getByText("Aguardando validação da administração.")).toBeVisible();

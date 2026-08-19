@@ -7,9 +7,10 @@
 begin;
 
 set local session_replication_role = replica;
-insert into auth.users(id, email)
-values ('00000000-0000-0000-0000-0000000000a9','respondent-deadline@orienta.test')
-on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a9',
+  'respondent-deadline@orienta.test'
+);
 insert into public.profiles(user_id, role, organization_id, full_name)
 values ('00000000-0000-0000-0000-0000000000a9','respondent','00000000-0000-0000-0000-0000000000b1','Respondente Prazo')
 on conflict (user_id) do update set role=excluded.role, organization_id=excluded.organization_id;

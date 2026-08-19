@@ -6,9 +6,10 @@
 
 begin;
 
-insert into auth.users(id, email)
-values ('00000000-0000-0000-0000-0000000000a5', 'respondent-import@orienta.test')
-on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a5',
+  'respondent-import@orienta.test'
+);
 
 insert into public.profiles(user_id, role, organization_id, full_name)
 values (

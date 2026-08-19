@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export const E2E = {
   adminEmail: process.env.E2E_ADMIN_EMAIL ?? "admin.e2e@orienta.local",
@@ -17,6 +17,14 @@ export const E2E = {
 };
 
 export type E2ERole = "admin" | "respondent" | "outsider";
+
+/** Seleciona a opção visível do critério, fora do header/footer sticky. */
+export async function chooseCriterionAnswer(card: Locator, name: string) {
+  const radio = card.getByRole("radio", { name, exact: true });
+  await radio.scrollIntoViewIfNeeded();
+  await radio.check();
+  await expect(radio).toBeChecked();
+}
 
 let adminTotpSecret: string | null = null;
 

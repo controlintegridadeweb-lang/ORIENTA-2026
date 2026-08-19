@@ -37,7 +37,7 @@ if (!DB) {
 }
 
 function psql(args, { input } = {}) {
-  const res = spawnSync("psql", [DB, "-v", "ON_ERROR_STOP=1", ...args], {
+  const res = spawnSync("psql", ["-d", DB, "-v", "ON_ERROR_STOP=1", ...args], {
     input,
     encoding: "utf8",
   });
@@ -48,6 +48,13 @@ function run(label, args, input) {
   const res = psql(args, { input });
   if (res.status !== 0) {
     console.error(`✗ ${label}`);
+    if (res.error) {
+      console.error("--- spawn ---");
+      console.error(res.error.message);
+      if (res.error.code === "ENOENT") {
+        console.error("psql não está no PATH do job.");
+      }
+    }
     const stderr = (res.stderr || "").trim();
     const stdout = (res.stdout || "").trim();
     if (stderr) {

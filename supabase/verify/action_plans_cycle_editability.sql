@@ -8,9 +8,10 @@ grant select on public.action_plans, public.recommendations, public.cycles to au
 
 set session_replication_role = replica;
 
-insert into auth.users(id, email)
-values ('00000000-0000-0000-0000-0000000000a2', 'respondent-action-plans@orienta.test')
-on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a2',
+  'respondent-action-plans@orienta.test'
+);
 
 insert into public.profiles(user_id, role, organization_id)
 values (
@@ -25,9 +26,10 @@ insert into public.organizations(id, name, acronym)
 values ('00000000-0000-0000-0000-0000000000b2', 'Outra organização', 'OUTRA')
 on conflict (id) do nothing;
 
-insert into auth.users(id, email)
-values ('00000000-0000-0000-0000-0000000000a3', 'respondent-other-org@orienta.test')
-on conflict do nothing;
+select public._verify_ensure_auth_user(
+  '00000000-0000-0000-0000-0000000000a3',
+  'respondent-other-org@orienta.test'
+);
 
 insert into public.profiles(user_id, role, organization_id)
 values (

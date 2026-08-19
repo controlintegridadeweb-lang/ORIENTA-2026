@@ -34,6 +34,10 @@ begin
     'yes', false
   );
 
+  -- Arquivo real exige pending upload verificado. O fixture só monta linhas
+  -- para provar FKs/CHECKs; a guarda de upload é coberta em pending_evidence_uploads.
+  perform set_config('session_replication_role', 'replica', true);
+
   -- Uma resposta pode reunir vários documentos comprobatórios ativos.
   insert into public.evidences(
     id, response_id, kind, storage_path, original_filename, submitted_by
@@ -52,6 +56,8 @@ begin
     'file', 'seed/cycle/evidencia-ativa-2.pdf', 'evidencia-ativa-2.pdf',
     '00000000-0000-0000-0000-0000000000a1'
   );
+
+  perform set_config('session_replication_role', 'origin', true);
 
   if (select count(*) from public.evidences where response_id = '00000000-0000-0000-0000-000000000dd1' and deactivated_at is null) <> 2 then
     raise exception 'FALHOU(evidences): múltiplas evidências ativas não foram preservadas';
