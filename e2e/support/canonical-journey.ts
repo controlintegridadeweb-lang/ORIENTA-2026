@@ -57,7 +57,7 @@ function questionBinding(page: Page, prompt: string): Locator {
  * Se a API falhar, usa o próprio “Tentar novamente” da tela — não há valor
  * padrão silencioso, então o E2E só segue com o contrato persistido.
  */
-export async function openQuestionBinding(page: Page, prompt: string): Promise<Locator> {
+async function openQuestionBinding(page: Page, prompt: string): Promise<Locator> {
   const binding = questionBinding(page, prompt);
   const header = binding.getByRole("button", { name: prompt });
   if ((await header.getAttribute("aria-expanded")) !== "true") {

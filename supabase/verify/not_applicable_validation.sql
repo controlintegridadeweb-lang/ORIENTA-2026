@@ -31,6 +31,12 @@ declare
   v_reason text;
   v_revision bigint;
 begin
+  -- O seed já tem a resposta 000…dd1. A RPC exige a revisão corrente; passar
+  -- null dispara response_revision_conflict antes da guarda de justificativa.
+  select revision into strict v_revision
+  from public.responses
+  where id = '00000000-0000-0000-0000-000000000dd1';
+
   begin
     perform public.apply_workbench_response(
       '00000000-0000-0000-0000-000000000cc1',
@@ -38,12 +44,14 @@ begin
       '00000000-0000-0000-0000-0000000000f1',
       'not_applicable'::public.answer_value,
       'justificativa curta',
-      null,
+      v_revision,
       null
     );
     raise exception 'FALHOU(justificativa): aceitou texto com menos de 20 caracteres';
   exception when sqlstate '22023' then
-    null;
+    if sqlerrm not like '%na_justification_required%' then
+      raise;
+    end if;
   end;
 
   perform public.apply_workbench_response(
@@ -52,7 +60,7 @@ begin
     '00000000-0000-0000-0000-0000000000f1',
     'not_applicable'::public.answer_value,
     'Esta justificativa válida possui mais de vinte caracteres.',
-    null,
+    v_revision,
     null
   );
 
