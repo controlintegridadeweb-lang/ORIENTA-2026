@@ -104,12 +104,17 @@ begin
   begin
     insert into public.action_plans(
       recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
-    ) values (
+    )
+    select
       '00000000-0000-0000-0000-00000000b241',
-      '00000000-0000-0000-0000-0000000000c1',
-      'Contorno indevido do respondente', current_date, current_date + 30,
-      'TI — Responsável', 'todo'
-    );
+      a.id,
+      'Contorno indevido do respondente',
+      current_date,
+      current_date + 30,
+      'TI — Responsável',
+      'todo'
+    from public.axes a
+    where a.name = 'Governanca';
     raise exception 'FALHOU(data-api): respondente escreveu diretamente em action_plans';
   exception when insufficient_privilege then
     null;
@@ -125,12 +130,17 @@ begin
   begin
     insert into public.action_plans(
       recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
-    ) values (
+    )
+    select
       '00000000-0000-0000-0000-00000000b241',
-      '00000000-0000-0000-0000-0000000000c1',
-      'Contorno indevido do administrador', current_date, current_date + 30,
-      'TI — Administrador', 'todo'
-    );
+      a.id,
+      'Contorno indevido do administrador',
+      current_date,
+      current_date + 30,
+      'TI — Administrador',
+      'todo'
+    from public.axes a
+    where a.name = 'Governanca';
     raise exception 'FALHOU(data-api): administrador escreveu diretamente em action_plans';
   exception when insufficient_privilege then
     null;
@@ -166,12 +176,17 @@ begin
   begin
     insert into public.action_plans(
       recommendation_id, axis_id, action_text, start_date, due_date, responsible_label, status
-    ) values (
+    )
+    select
       '00000000-0000-0000-0000-00000000b241',
-      '00000000-0000-0000-0000-0000000000c2',
-      'Ação com eixo inconsistente', current_date, current_date + 30,
-      'TI — Responsável', 'todo'
-    );
+      a.id,
+      'Ação com eixo inconsistente',
+      current_date,
+      current_date + 30,
+      'TI — Responsável',
+      'todo'
+    from public.axes a
+    where a.name = 'Ambiental';
     raise exception 'FALHOU(axis): plano aceitou eixo divergente da recomendação';
   exception when check_violation then
     null;
@@ -180,17 +195,17 @@ begin
   select result.plan_id, result.mode, result.revision
     into v_plan_id, v_mode, v_revision
   from public.save_respondent_action_plan(
-    '00000000-0000-0000-0000-0000000000a2',
-    '00000000-0000-0000-0000-0000000000b1',
-    null,
-    '00000000-0000-0000-0000-00000000b241',
-    'Implantar controle institucional',
-    current_date + 30,
-    'Tecnologia da Informação',
-    '00000000-0000-0000-0000-0000000000a2',
-    'todo',
-    null,
-    'Observação operacional'
+    p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+    p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+    p_plan_id := null,
+    p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+    p_action_text := 'Implantar controle institucional',
+    p_due_date := current_date + 30,
+    p_start_date := current_date,
+    p_responsible_sector := 'Tecnologia da Informação',
+    p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+    p_progress_percentage := 0,
+    p_execution_notes := 'Observação operacional'
   ) result;
 
   if v_plan_id is null or v_mode <> 'created' then
@@ -209,17 +224,18 @@ begin
 
   select result.mode, result.revision into v_mode, v_revision
   from public.save_respondent_action_plan(
-    '00000000-0000-0000-0000-0000000000a2',
-    '00000000-0000-0000-0000-0000000000b1',
-    v_plan_id,
-    '00000000-0000-0000-0000-00000000b241',
-    'Implantar e monitorar controle institucional',
-    current_date + 45,
-    'Tecnologia da Informação',
-    '00000000-0000-0000-0000-0000000000a2',
-    'doing',
-    v_revision,
-    'Execução iniciada'
+    p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+    p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+    p_plan_id := v_plan_id,
+    p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+    p_action_text := 'Implantar e monitorar controle institucional',
+    p_due_date := current_date + 45,
+    p_start_date := current_date,
+    p_responsible_sector := 'Tecnologia da Informação',
+    p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+    p_progress_percentage := 50,
+    p_expected_revision := v_revision,
+    p_execution_notes := 'Execução iniciada'
   ) result;
 
   select action_text into v_action_text
@@ -230,17 +246,18 @@ begin
 
   begin
     perform public.save_respondent_action_plan(
-      '00000000-0000-0000-0000-0000000000a2',
-      '00000000-0000-0000-0000-0000000000b1',
-      v_plan_id,
-      '00000000-0000-0000-0000-00000000b241',
-      'Sobrescrita concorrente indevida',
-      current_date + 60,
-      'Tecnologia da Informação',
-      '00000000-0000-0000-0000-0000000000a2',
-      'doing',
-      v_stale_revision,
-      'Esta alteração deve ser rejeitada.'
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := v_plan_id,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+      p_action_text := 'Sobrescrita concorrente indevida',
+      p_due_date := current_date + 60,
+      p_start_date := current_date,
+      p_responsible_sector := 'Tecnologia da Informação',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_progress_percentage := 50,
+      p_expected_revision := v_stale_revision,
+      p_execution_notes := 'Esta alteração deve ser rejeitada.'
     );
     raise exception 'FALHOU(concorrência): revisão antiga foi aceita';
   exception when sqlstate '40001' then
@@ -256,17 +273,16 @@ begin
   -- O administrador global não pode usar a RPC operacional do respondente.
   begin
     perform public.save_respondent_action_plan(
-      '00000000-0000-0000-0000-0000000000a1',
-      '00000000-0000-0000-0000-0000000000b1',
-      null,
-      '00000000-0000-0000-0000-00000000b241',
-      'Ação administrativa indevida',
-      current_date + 30,
-      'Administração',
-      '00000000-0000-0000-0000-0000000000a2',
-      'todo',
-      null,
-      null
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a1',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := null,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+      p_action_text := 'Ação administrativa indevida',
+      p_due_date := current_date + 30,
+      p_start_date := current_date,
+      p_responsible_sector := 'Administração',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_progress_percentage := 0
     );
     raise exception 'FALHOU(admin): RPC permitiu escrita administrativa';
   exception when insufficient_privilege then
@@ -276,17 +292,16 @@ begin
   -- Recomendação fora do processamento oficial editável não aceita plano.
   begin
     perform public.save_respondent_action_plan(
-      '00000000-0000-0000-0000-0000000000a2',
-      '00000000-0000-0000-0000-0000000000b1',
-      null,
-      '00000000-0000-0000-0000-00000000b242',
-      'Ação antes da consolidação',
-      current_date + 30,
-      'Tecnologia da Informação',
-      '00000000-0000-0000-0000-0000000000a2',
-      'todo',
-      null,
-      null
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := null,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b242',
+      p_action_text := 'Ação antes da consolidação',
+      p_due_date := current_date + 30,
+      p_start_date := current_date,
+      p_responsible_sector := 'Tecnologia da Informação',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_progress_percentage := 0
     );
     raise exception 'FALHOU(estado): RPC aceitou recomendação não editável';
   exception when insufficient_privilege then
@@ -296,17 +311,16 @@ begin
   -- O responsável precisa ser um respondente real da mesma organização.
   begin
     perform public.save_respondent_action_plan(
-      '00000000-0000-0000-0000-0000000000a2',
-      '00000000-0000-0000-0000-0000000000b1',
-      null,
-      '00000000-0000-0000-0000-00000000b241',
-      'Ação com responsável externo',
-      current_date + 30,
-      'Tecnologia da Informação',
-      '00000000-0000-0000-0000-0000000000a3',
-      'todo',
-      null,
-      null
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := null,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+      p_action_text := 'Ação com responsável externo',
+      p_due_date := current_date + 30,
+      p_start_date := current_date,
+      p_responsible_sector := 'Tecnologia da Informação',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a3',
+      p_progress_percentage := 0
     );
     raise exception 'FALHOU(responsável): RPC aceitou usuário de outro órgão';
   exception when invalid_parameter_value then
@@ -316,17 +330,16 @@ begin
   -- A RPC também rejeita conteúdo que passaria por uma chamada direta malformada.
   begin
     perform public.save_respondent_action_plan(
-      '00000000-0000-0000-0000-0000000000a2',
-      '00000000-0000-0000-0000-0000000000b1',
-      null,
-      '00000000-0000-0000-0000-00000000b241',
-      '     ',
-      current_date + 30,
-      'TI',
-      '00000000-0000-0000-0000-0000000000a2',
-      'todo',
-      null,
-      null
+      p_actor_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_organization_id := '00000000-0000-0000-0000-0000000000b1',
+      p_plan_id := null,
+      p_recommendation_id := '00000000-0000-0000-0000-00000000b241',
+      p_action_text := '     ',
+      p_due_date := current_date + 30,
+      p_start_date := current_date,
+      p_responsible_sector := 'TI',
+      p_responsible_user_id := '00000000-0000-0000-0000-0000000000a2',
+      p_progress_percentage := 0
     );
     raise exception 'FALHOU(validation): RPC aceitou ação vazia';
   exception when invalid_parameter_value then

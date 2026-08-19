@@ -42,10 +42,11 @@ on conflict (id) do nothing;
 insert into public.action_plans(
   id, recommendation_id, axis_id, action_text, start_date, due_date,
   responsible_user_id, responsible_label, progress_percentage, status, revision
-) values (
+)
+select
   '00000000-0000-0000-0000-000000000a99',
   '00000000-0000-0000-0000-000000000b99',
-  '00000000-0000-0000-0000-0000000000c1',
+  a.id,
   'Executar ação usada para validar alteração formal de prazo',
   current_date,
   current_date + 30,
@@ -54,7 +55,9 @@ insert into public.action_plans(
   0,
   'todo',
   1
-) on conflict (id) do nothing;
+from public.axes a
+where a.name = 'Governanca'
+on conflict (id) do update set axis_id = excluded.axis_id;
 set local session_replication_role = origin;
 
 do $$

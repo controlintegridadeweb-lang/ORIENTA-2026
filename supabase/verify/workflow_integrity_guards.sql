@@ -60,13 +60,18 @@ insert into public.recommendations(
 insert into public.action_plans(
   id, recommendation_id, axis_id, action_text, start_date, due_date,
   responsible_label, status
-) values (
+)
+select
   '10000000-0000-0000-0000-000000000009',
   '10000000-0000-0000-0000-000000000008',
-  '00000000-0000-0000-0000-0000000000c1',
-  'Manter a cobertura institucional', current_date, current_date + 30,
-  'Responsável institucional', 'todo'
-);
+  a.id,
+  'Manter a cobertura institucional',
+  current_date,
+  current_date + 30,
+  'Responsável institucional',
+  'todo'
+from public.axes a
+where a.name = 'Governanca';
 
 reset session_replication_role;
 
