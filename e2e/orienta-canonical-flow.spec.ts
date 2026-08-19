@@ -131,7 +131,9 @@ test.describe.serial("jornada canônica da plataforma", () => {
     expect(cycleId).toMatch(/^[0-9a-f-]{36}$/i);
     expect(organizationId).toMatch(/^[0-9a-f-]{36}$/i);
 
-    await expect(page.getByRole("status")).toContainText(/1 diagnóstico\(s\) aberto/);
+    await expect(
+      page.getByRole("status").filter({ hasText: "1 diagnóstico aberto" }),
+    ).toBeVisible();
     await page.goto(`/admin/ciclos/${cycleId}`);
     await expectAdminCycleState(page, /Em preenchimento|Em resposta/);
     await logout(page);
@@ -171,7 +173,7 @@ test.describe.serial("jornada canônica da plataforma", () => {
     await evidenceYes.click();
     // Confirma a persistencia da resposta "Sim" com evidencia antes de seguir.
     await expect(
-      evidenceCard.getByText("Evidência recebida; aguardando validação."),
+      evidenceCard.getByText("Evidência enviada e aguardando validação."),
     ).toBeVisible();
 
     const recommendationCard = page.locator("li").filter({ hasText: E2E.recommendationQuestion });
@@ -305,7 +307,7 @@ test.describe.serial("jornada canônica da plataforma", () => {
     await evidenceCard.getByLabel(/T[íi]tulo/i).last().fill("Evidência E2E corrigida");
     await evidenceCard.getByRole("button", { name: "Salvar resposta" }).click();
     await expect(
-      evidenceCard.getByText("Nova evidência registrada. Revise as correções e reenvie o diagnóstico."),
+      evidenceCard.getByText("Nova evidência registrada. Revise a correção e reenvie o diagnóstico."),
     ).toBeVisible();
     await page.getByRole("button", { name: "Revisar e reenviar correções" }).click();
     await acceptPlatformConfirm(page, "Reenviar correções");
@@ -478,7 +480,7 @@ test.describe.serial("jornada canônica da plataforma", () => {
       .fill(futureFortalezaDateTimeInput(7));
     await clickWithPlatformConfirm(page, "Reabrir diagnóstico");
     await expectAdminCycleState(page, /Em preenchimento|Em resposta/);
-    await expect(page.getByText(/Reaberturas/i)).toBeVisible();
+    await expect(page.getByText("Diagnóstico reaberto com sucesso.")).toBeVisible();
     await logout(page);
 
     await loginAs(page, "respondent");
