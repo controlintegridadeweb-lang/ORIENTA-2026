@@ -265,7 +265,11 @@ test.describe.serial("jornada canônica da plataforma", () => {
       .getByRole("button", { name: "Confirmar: Solicitar ajuste" })
       .click();
     await expect(evidenceValidationCard.getByText("Ajuste solicitado", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Enviar solicitações de ajuste" }).click();
+    await clickWithPlatformConfirm(
+      page,
+      "Enviar solicitações de ajuste",
+      "Enviar solicitação",
+    );
     await expect(page).toHaveURL(new RegExp(`/admin/ciclos/${cycleId}\\?validation=adjustment_requested`));
     await expectAdminCycleState(page, /^Aguardando correção do respondente$/);
     await expect(page.getByText("Ajuste solicitado à organização.")).toBeVisible();
@@ -325,10 +329,14 @@ test.describe.serial("jornada canônica da plataforma", () => {
     const evidenceValidationCard = page
       .getByRole("article")
       .filter({ hasText: E2E.evidenceQuestion });
-    await evidenceValidationCard.getByRole("button", { name: "Aprovar", exact: true }).click();
-    await evidenceValidationCard.getByRole("button", { name: "Confirmar: Aprovar" }).click();
+    await evidenceValidationCard.getByRole("button", { name: "Aprovar evidência", exact: true }).click();
+    await evidenceValidationCard.getByRole("button", { name: "Confirmar: Aprovar evidência" }).click();
     await expect(page.getByRole("button", { name: "Concluir validação e calcular FAMI" })).toBeVisible();
-    await page.getByRole("button", { name: "Concluir validação e calcular FAMI" }).click();
+    await clickWithPlatformConfirm(
+      page,
+      "Concluir validação e calcular FAMI",
+      "Concluir e calcular FAMI",
+    );
     await expect(page).toHaveURL(new RegExp(`/admin/ciclos/${cycleId}`));
     await expectAdminCycleState(page, /^Diagnóstico concluído$/);
     await expect(page.getByText("Validação concluída e resultado FAMI calculado.")).toBeVisible();
